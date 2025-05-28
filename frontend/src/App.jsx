@@ -2,10 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   Routes,
   Route,
-  // Link // Consider using Link for navigation later
 } from 'react-router-dom';
 import './App.css';
-import HomePage from './components/HomePage'; // Importar HomePage
+import Layout from './components/Layout'; // Importar Layout
+import HomePage from './components/HomePage';
 import InventoryDashboard from './components/inventory/InventoryDashboard';
 import AddFragrancePage from './components/inventory/Fragrance/AddFragrancePage';
 import AddBottlePage from './components/inventory/Bottle/AddBottlePage';
@@ -74,7 +74,7 @@ function App() {
     setIsLoadingBottles(true);
     setErrorBottles(null);
     try {
-      const response = await fetch('http://localhost:8000/inventory/bottles/'); // Endpoint para botellas
+      const response = await fetch('http://localhost:8000/inventory/bottles/');
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setBottles(data);
@@ -91,7 +91,7 @@ function App() {
     setIsLoadingAlcohols(true);
     setErrorAlcohols(null);
     try {
-      const response = await fetch('http://localhost:8000/inventory/alcohols/'); // Endpoint para alcoholes
+      const response = await fetch('http://localhost:8000/inventory/alcohols/');
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setAlcohols(data);
@@ -142,7 +142,7 @@ function App() {
     setIsLoadingHumidifierEssences(true);
     setErrorHumidifierEssences(null);
     try {
-      const res = await fetch('http://localhost:8000/inventory/humidifier-essences/'); // Ajusta el endpoint si es necesario
+      const res = await fetch('http://localhost:8000/inventory/humidifier-essences/');
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
       setHumidifierEssences(data);
@@ -210,34 +210,32 @@ function App() {
   };
 
   return (
-    <div className="App">
-      {/* Podrías tener un componente de Layout aquí con Navbar, etc. */}
-      <Routes>
+    // No className="App" needed here if Layout handles root styling
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        {/* Rutas anidadas que se renderizarán dentro de Layout */}
+        <Route index element={<HomePage />} /> {/* Ruta de inicio */}
         <Route 
-          path="/"
-          element={<HomePage />}
-        />
-        <Route 
-          path="/inventory"
+          path="inventory" 
           element={(
             <InventoryDashboard 
               fragrances={fragrances}
               isLoadingFragrances={isLoadingFragrances}
               errorFragrances={errorFragrances}
               onRefreshFragrances={fetchFragrances}
-              bottles={bottles} // Pasar datos de botellas
+              bottles={bottles}
               isLoadingBottles={isLoadingBottles}
               errorBottles={errorBottles}
               onRefreshBottles={fetchBottles}
-              alcohols={alcohols} // Pasar datos de alcoholes
+              alcohols={alcohols}
               isLoadingAlcohols={isLoadingAlcohols}
               errorAlcohols={errorAlcohols}
               onRefreshAlcohols={fetchAlcohols}
-              additives={additives} // Pasar datos de aditivos
+              additives={additives}
               isLoadingAdditives={isLoadingAdditives}
               errorAdditives={errorAdditives}
               onRefreshAdditives={fetchAdditives}
-              humidifiers={humidifiers} // Pasar datos de humidificadores
+              humidifiers={humidifiers}
               isLoadingHumidifiers={isLoadingHumidifiers}
               errorHumidifiers={errorHumidifiers}
               onRefreshHumidifiers={fetchHumidifiers}
@@ -253,36 +251,37 @@ function App() {
           )}
         />
         <Route 
-          path="/inventory/fragrances/add"
+          path="inventory/fragrances/add"
           element={<AddFragrancePage onFragranceAdded={handleFragranceAdded} />}
         />
         <Route 
-          path="/inventory/bottles/add" // Ruta para añadir botellas
+          path="inventory/bottles/add"
           element={<AddBottlePage onBottleAdded={handleBottleAdded} />}
         />
         <Route 
-          path="/inventory/alcohols/add" // Ruta para añadir alcohol
+          path="inventory/alcohols/add"
           element={<AddAlcoholPage onAlcoholAdded={handleAlcoholAdded} />}
         />
         <Route 
-          path="/inventory/additives/add" // Ruta para añadir aditivo
+          path="inventory/additives/add"
           element={<AddAdditivePage onAdditiveAdded={handleAdditiveAdded} />}
         />
         <Route 
-          path="/inventory/humidifiers/add" // Ruta para añadir humidificador
+          path="inventory/humidifiers/add"
           element={<AddHumidifierPage onHumidifierAdded={handleHumidifierAdded} />}
         />
         <Route 
-          path="/inventory/humidifier-essences/add" // Ruta para añadir esencia
+          path="inventory/humidifier-essences/add"
           element={<AddHumidifierEssencePage onHumidifierEssenceAdded={handleHumidifierEssenceAdded} />}
         />
-        <Route
-          path="/inventory/finished-products/add" // Ruta para añadir producto terminado
+        <Route 
+          path="inventory/finished-products/add"
           element={<AddFinishedProductPage onFinishedProductAdded={handleFinishedProductAdded} />}
         />
-        {/* Define otras rutas aquí */}
-      </Routes>
-    </div>
+        {/* Considerar una ruta catch-all para 404 Not Found */}
+        {/* <Route path="*" element={<NotFoundPage />} /> */}
+      </Route>
+    </Routes>
   );
 }
 

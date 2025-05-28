@@ -8,28 +8,6 @@ import HumidifierList from './Humidifier/HumidifierList'; // Importar Humidifier
 import HumidifierEssenceList from './HumidifierEssence/HumidifierEssenceList'; // Importar HumidifierEssenceList
 import FinishedProductList from './FinishedProduct/FinishedProductList'; // Import FinishedProductList
 
-// Estilos simples para los tabs (pueden mejorarse mucho con CSS dedicado)
-const tabStyles = {
-  tabsContainer: {
-    display: 'flex',
-    marginBottom: '10px',
-    borderBottom: '1px solid #ccc',
-    flexWrap: 'wrap',
-  },
-  tabButton: {
-    padding: '10px 15px',
-    cursor: 'pointer',
-    border: 'none',
-    backgroundColor: 'transparent',
-    borderBottom: '2px solid transparent',
-    marginRight: '5px',
-  },
-  activeTab: {
-    borderBottom: '2px solid blue',
-    fontWeight: 'bold',
-  }
-};
-
 function InventoryDashboard({ 
   fragrances, isLoadingFragrances, errorFragrances, onRefreshFragrances,
   bottles, isLoadingBottles, errorBottles, onRefreshBottles,
@@ -41,140 +19,111 @@ function InventoryDashboard({
 }) {
   const [activeTab, setActiveTab] = useState('fragrances'); // 'fragrances', 'bottles', 'alcohols', 'additives', 'humidifiers', 'humidifierEssences', 'finishedProducts'
 
+  const getTabClassName = (tabName) => {
+    let className = "py-3 px-5 cursor-pointer border-b-2 font-medium text-sm leading-5 focus:outline-none transition-colors duration-150 ease-in-out mr-2";
+    if (activeTab === tabName) {
+      className += " text-purple-600 border-purple-600";
+    } else {
+      className += " text-gray-500 hover:text-gray-700 border-transparent hover:border-gray-300";
+    }
+    return className;
+  };
+
+  const buttonStyle = "bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-3 rounded-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-75 transition-all duration-150 ease-in-out text-sm";
+
   return (
-    <div>
-      <h1>Panel de Inventario</h1>
+    <div className="bg-white shadow-md rounded-lg p-6">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">Panel de Inventario</h1>
       
-      <div style={{ marginBottom: '20px', display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-        <Link to="/inventory/fragrances/add">
-          <button>Añadir Fragancia</button>
-        </Link>
-        <Link to="/inventory/bottles/add">
-          <button>Añadir Botella</button>
-        </Link>
-        <Link to="/inventory/alcohols/add"> {/* Enlace para añadir alcohol */}
-          <button>Añadir Alcohol</button>
-        </Link>
-        <Link to="/inventory/additives/add"> {/* Enlace para añadir aditivo */}
-          <button>Añadir Aditivo</button>
-        </Link>
-        <Link to="/inventory/humidifiers/add"> {/* Enlace para añadir humidificador */}
-          <button>Añadir Humidificador</button>
-        </Link>
-        <Link to="/inventory/humidifier-essences/add"> {/* Enlace para añadir esencia */}
-          <button>Añadir Esencia Hum.</button>
-        </Link>
-        <Link to="/inventory/finished-products/add"> {/* Button to add Finished Product */}
-          <button>Añadir Producto Terminado</button>
-        </Link>
-        {/* Aquí irán más botones para otros ítems */}
-      </div>
-      
-      {/* Contenedor de Tabs */}
-      <div style={tabStyles.tabsContainer}>
-        <button 
-          style={activeTab === 'fragrances' ? {...tabStyles.tabButton, ...tabStyles.activeTab} : tabStyles.tabButton}
-          onClick={() => setActiveTab('fragrances')}
-        >
-          Fragancias
-        </button>
-        <button 
-          style={activeTab === 'bottles' ? {...tabStyles.tabButton, ...tabStyles.activeTab} : tabStyles.tabButton}
-          onClick={() => setActiveTab('bottles')}
-        >
-          Botellas
-        </button>
-        <button 
-          style={activeTab === 'alcohols' ? {...tabStyles.tabButton, ...tabStyles.activeTab} : tabStyles.tabButton}
-          onClick={() => setActiveTab('alcohols')}
-        >
-          Alcoholes
-        </button>
-        <button 
-          style={activeTab === 'additives' ? {...tabStyles.tabButton, ...tabStyles.activeTab} : tabStyles.tabButton}
-          onClick={() => setActiveTab('additives')}
-        >
-          Aditivos
-        </button>
-        <button 
-          style={activeTab === 'humidifiers' ? {...tabStyles.tabButton, ...tabStyles.activeTab} : tabStyles.tabButton}
-          onClick={() => setActiveTab('humidifiers')}
-        >
-          Humidificadores
-        </button>
-        <button 
-          style={activeTab === 'humidifierEssences' ? {...tabStyles.tabButton, ...tabStyles.activeTab} : tabStyles.tabButton}
-          onClick={() => setActiveTab('humidifierEssences')}
-        >
-          Esencias Hum.
-        </button>
-        <button /* Tab for Finished Products */
-          style={activeTab === 'finishedProducts' ? {...tabStyles.tabButton, ...tabStyles.activeTab} : tabStyles.tabButton}
-          onClick={() => setActiveTab('finishedProducts')}
-        >
-          Productos Terminados
-        </button>
-        {/* Próximamente: Tabs para Aditivos, etc. */}
+      <div className="border-b border-gray-200 mb-6">
+        <nav className="-mb-px flex flex-wrap" aria-label="Tabs">
+          <button className={getTabClassName('fragrances')} onClick={() => setActiveTab('fragrances')}>Fragancias</button>
+          <button className={getTabClassName('bottles')} onClick={() => setActiveTab('bottles')}>Botellas</button>
+          <button className={getTabClassName('alcohols')} onClick={() => setActiveTab('alcohols')}>Alcoholes</button>
+          <button className={getTabClassName('additives')} onClick={() => setActiveTab('additives')}>Aditivos</button>
+          <button className={getTabClassName('humidifiers')} onClick={() => setActiveTab('humidifiers')}>Humidificadores</button>
+          <button className={getTabClassName('humidifierEssences')} onClick={() => setActiveTab('humidifierEssences')}>Esencias Hum.</button>
+          <button className={getTabClassName('finishedProducts')} onClick={() => setActiveTab('finishedProducts')}>Productos Terminados</button>
+        </nav>
       </div>
 
-      {/* Contenido de los Tabs */}
       {activeTab === 'fragrances' && (
-        <FragranceList 
-          fragrances={fragrances} 
-          isLoading={isLoadingFragrances} 
-          error={errorFragrances} 
-          onRetry={onRefreshFragrances}
-        />
+        <section>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold text-gray-700">Gestión de Fragancias</h2>
+            <Link to="/inventory/fragrances/add">
+              <button className={buttonStyle}>Añadir Fragancia</button>
+            </Link>
+          </div>
+          <FragranceList fragrances={fragrances} isLoading={isLoadingFragrances} error={errorFragrances} onRetry={onRefreshFragrances} />
+        </section>
       )}
       {activeTab === 'bottles' && (
-        <BottleList 
-          bottles={bottles} 
-          isLoading={isLoadingBottles} 
-          error={errorBottles} 
-          onRetry={onRefreshBottles}
-        />
+        <section>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold text-gray-700">Gestión de Botellas</h2>
+            <Link to="/inventory/bottles/add">
+              <button className={buttonStyle}>Añadir Botella</button>
+            </Link>
+          </div>
+          <BottleList bottles={bottles} isLoading={isLoadingBottles} error={errorBottles} onRetry={onRefreshBottles} />
+        </section>
       )}
       {activeTab === 'alcohols' && (
-        <AlcoholList 
-          alcohols={alcohols} 
-          isLoading={isLoadingAlcohols} 
-          error={errorAlcohols} 
-          onRetry={onRefreshAlcohols}
-        />
+        <section>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold text-gray-700">Gestión de Alcoholes</h2>
+            <Link to="/inventory/alcohols/add">
+              <button className={buttonStyle}>Añadir Alcohol</button>
+            </Link>
+          </div>
+          <AlcoholList alcohols={alcohols} isLoading={isLoadingAlcohols} error={errorAlcohols} onRetry={onRefreshAlcohols} />
+        </section>
       )}
       {activeTab === 'additives' && (
-        <AdditiveList 
-          additives={additives} 
-          isLoading={isLoadingAdditives} 
-          error={errorAdditives} 
-          onRetry={onRefreshAdditives}
-        />
+        <section>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold text-gray-700">Gestión de Aditivos</h2>
+            <Link to="/inventory/additives/add">
+              <button className={buttonStyle}>Añadir Aditivo</button>
+            </Link>
+          </div>
+          <AdditiveList additives={additives} isLoading={isLoadingAdditives} error={errorAdditives} onRetry={onRefreshAdditives} />
+        </section>
       )}
       {activeTab === 'humidifiers' && (
-        <HumidifierList 
-          humidifiers={humidifiers} 
-          isLoading={isLoadingHumidifiers} 
-          error={errorHumidifiers} 
-          onRetry={onRefreshHumidifiers}
-        />
+        <section>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold text-gray-700">Gestión de Humidificadores</h2>
+            <Link to="/inventory/humidifiers/add">
+              <button className={buttonStyle}>Añadir Humidificador</button>
+            </Link>
+          </div>
+          <HumidifierList humidifiers={humidifiers} isLoading={isLoadingHumidifiers} error={errorHumidifiers} onRetry={onRefreshHumidifiers} />
+        </section>
       )}
       {activeTab === 'humidifierEssences' && (
-        <HumidifierEssenceList 
-          humidifierEssences={humidifierEssences} 
-          isLoading={isLoadingHumidifierEssences} 
-          error={errorHumidifierEssences} 
-          onRetry={onRefreshHumidifierEssences}
-        />
+        <section>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold text-gray-700">Gestión de Esencias Hum.</h2>
+            <Link to="/inventory/humidifier-essences/add">
+              <button className={buttonStyle}>Añadir Esencia Hum.</button>
+            </Link>
+          </div>
+          <HumidifierEssenceList humidifierEssences={humidifierEssences} isLoading={isLoadingHumidifierEssences} error={errorHumidifierEssences} onRetry={onRefreshHumidifierEssences} />
+        </section>
       )}
-      {activeTab === 'finishedProducts' && ( /* Conditional rendering for FinishedProductList */
-        <FinishedProductList 
-          finishedProducts={finishedProducts} 
-          isLoading={isLoadingFinishedProducts} 
-          error={errorFinishedProducts} 
-          onRetry={onRefreshFinishedProducts}
-        />
+      {activeTab === 'finishedProducts' && (
+        <section>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold text-gray-700">Gestión de Productos Terminados</h2>
+            <Link to="/inventory/finished-products/add">
+              <button className={buttonStyle}>Añadir Producto Terminado</button>
+            </Link>
+          </div>
+          <FinishedProductList finishedProducts={finishedProducts} isLoading={isLoadingFinishedProducts} error={errorFinishedProducts} onRetry={onRefreshFinishedProducts} />
+        </section>
       )}
-      {/* Próximamente: Contenido para otros tabs */}
     </div>
   );
 }
