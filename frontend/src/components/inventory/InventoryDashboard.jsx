@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom'; // Importar Link para la navegación
-import FragranceList from './FragranceList';
-import BottleList from './BottleList'; // Importar BottleList
-import AlcoholList from './AlcoholList'; // Importar AlcoholList
-import AdditiveList from './AdditiveList'; // Importar AdditiveList
-import HumidifierList from './HumidifierList'; // Importar HumidifierList
-import HumidifierEssenceList from './HumidifierEssenceList'; // Importar HumidifierEssenceList
+import FragranceList from './Fragrance/FragranceList';
+import BottleList from './Bottle/BottleList'; // Importar BottleList
+import AlcoholList from './Alcohol/AlcoholList'; // Importar AlcoholList
+import AdditiveList from './Additive/AdditiveList'; // Importar AdditiveList
+import HumidifierList from './Humidifier/HumidifierList'; // Importar HumidifierList
+import HumidifierEssenceList from './HumidifierEssence/HumidifierEssenceList'; // Importar HumidifierEssenceList
+import FinishedProductList from './FinishedProduct/FinishedProductList'; // Import FinishedProductList
 
 // Estilos simples para los tabs (pueden mejorarse mucho con CSS dedicado)
 const tabStyles = {
@@ -35,9 +36,10 @@ function InventoryDashboard({
   alcohols, isLoadingAlcohols, errorAlcohols, onRefreshAlcohols,
   additives, isLoadingAdditives, errorAdditives, onRefreshAdditives,
   humidifiers, isLoadingHumidifiers, errorHumidifiers, onRefreshHumidifiers,
-  humidifierEssences, isLoadingHumidifierEssences, errorHumidifierEssences, onRefreshHumidifierEssences // Props para aditivos, humidificadores y esencias
+  humidifierEssences, isLoadingHumidifierEssences, errorHumidifierEssences, onRefreshHumidifierEssences,
+  finishedProducts, isLoadingFinishedProducts, errorFinishedProducts, onRefreshFinishedProducts // Props for FinishedProducts
 }) {
-  const [activeTab, setActiveTab] = useState('fragrances'); // 'fragrances', 'bottles', 'alcohols', 'additives', 'humidifiers', 'humidifierEssences'
+  const [activeTab, setActiveTab] = useState('fragrances'); // 'fragrances', 'bottles', 'alcohols', 'additives', 'humidifiers', 'humidifierEssences', 'finishedProducts'
 
   return (
     <div>
@@ -61,6 +63,9 @@ function InventoryDashboard({
         </Link>
         <Link to="/inventory/humidifier-essences/add"> {/* Enlace para añadir esencia */}
           <button>Añadir Esencia Hum.</button>
+        </Link>
+        <Link to="/inventory/finished-products/add"> {/* Button to add Finished Product */}
+          <button>Añadir Producto Terminado</button>
         </Link>
         {/* Aquí irán más botones para otros ítems */}
       </div>
@@ -102,6 +107,12 @@ function InventoryDashboard({
           onClick={() => setActiveTab('humidifierEssences')}
         >
           Esencias Hum.
+        </button>
+        <button /* Tab for Finished Products */
+          style={activeTab === 'finishedProducts' ? {...tabStyles.tabButton, ...tabStyles.activeTab} : tabStyles.tabButton}
+          onClick={() => setActiveTab('finishedProducts')}
+        >
+          Productos Terminados
         </button>
         {/* Próximamente: Tabs para Aditivos, etc. */}
       </div>
@@ -153,6 +164,14 @@ function InventoryDashboard({
           isLoading={isLoadingHumidifierEssences} 
           error={errorHumidifierEssences} 
           onRetry={onRefreshHumidifierEssences}
+        />
+      )}
+      {activeTab === 'finishedProducts' && ( /* Conditional rendering for FinishedProductList */
+        <FinishedProductList 
+          finishedProducts={finishedProducts} 
+          isLoading={isLoadingFinishedProducts} 
+          error={errorFinishedProducts} 
+          onRetry={onRefreshFinishedProducts}
         />
       )}
       {/* Próximamente: Contenido para otros tabs */}
