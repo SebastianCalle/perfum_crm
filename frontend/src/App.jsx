@@ -10,6 +10,7 @@ import InventoryDashboard from './components/inventory/InventoryDashboard';
 import AddFragrancePage from './components/inventory/AddFragrancePage';
 import AddBottlePage from './components/inventory/AddBottlePage'; // Importar AddBottlePage
 import AddAlcoholPage from './components/inventory/AddAlcoholPage'; // Importar AddAlcoholPage
+import AddAdditivePage from './components/inventory/AddAdditivePage'; // Importar AddAdditivePage
 // Importa otros componentes de página aquí cuando los necesites
 
 function App() {
@@ -27,6 +28,11 @@ function App() {
   const [alcohols, setAlcohols] = useState([]);
   const [isLoadingAlcohols, setIsLoadingAlcohols] = useState(true);
   const [errorAlcohols, setErrorAlcohols] = useState(null);
+
+  // Estado para Aditivos
+  const [additives, setAdditives] = useState([]);
+  const [isLoadingAdditives, setIsLoadingAdditives] = useState(true);
+  const [errorAdditives, setErrorAdditives] = useState(null);
 
   // Fetch Fragancias
   const fetchFragrances = useCallback(async () => {
@@ -79,11 +85,29 @@ function App() {
     }
   }, []);
 
+  // Fetch Aditivos
+  const fetchAdditives = useCallback(async () => {
+    setIsLoadingAdditives(true);
+    setErrorAdditives(null);
+    try {
+      const res = await fetch('http://localhost:8000/inventory/additives/');
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      const data = await res.json();
+      setAdditives(data);
+    } catch (err) {
+      setErrorAdditives(err.message);
+      setAdditives([]);
+    } finally {
+      setIsLoadingAdditives(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchFragrances();
     fetchBottles();
     fetchAlcohols();
-  }, [fetchFragrances, fetchBottles, fetchAlcohols]);
+    fetchAdditives();
+  }, [fetchFragrances, fetchBottles, fetchAlcohols, fetchAdditives]);
 
   const handleFragranceAdded = () => {
     fetchFragrances();
@@ -95,6 +119,10 @@ function App() {
 
   const handleAlcoholAdded = () => {
     fetchAlcohols();
+  };
+
+  const handleAdditiveAdded = () => {
+    fetchAdditives();
   };
 
   return (
@@ -121,6 +149,10 @@ function App() {
               isLoadingAlcohols={isLoadingAlcohols}
               errorAlcohols={errorAlcohols}
               onRefreshAlcohols={fetchAlcohols}
+              additives={additives} // Pasar datos de aditivos
+              isLoadingAdditives={isLoadingAdditives}
+              errorAdditives={errorAdditives}
+              onRefreshAdditives={fetchAdditives}
             />
           )}
         />
@@ -135,6 +167,10 @@ function App() {
         <Route 
           path="/inventory/alcohols/add" // Ruta para añadir alcohol
           element={<AddAlcoholPage onAlcoholAdded={handleAlcoholAdded} />}
+        />
+        <Route 
+          path="/inventory/additives/add" // Ruta para añadir aditivo
+          element={<AddAdditivePage onAdditiveAdded={handleAdditiveAdded} />}
         />
         {/* Define otras rutas aquí */}
       </Routes>

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'; // Importar Link para la navegación
 import FragranceList from './FragranceList';
 import BottleList from './BottleList'; // Importar BottleList
 import AlcoholList from './AlcoholList'; // Importar AlcoholList
+import AdditiveList from './AdditiveList'; // Importar AdditiveList
 
 // Estilos simples para los tabs (pueden mejorarse mucho con CSS dedicado)
 const tabStyles = {
@@ -28,9 +29,10 @@ const tabStyles = {
 function InventoryDashboard({ 
   fragrances, isLoadingFragrances, errorFragrances, onRefreshFragrances,
   bottles, isLoadingBottles, errorBottles, onRefreshBottles,
-  alcohols, isLoadingAlcohols, errorAlcohols, onRefreshAlcohols // Props para alcohol
+  alcohols, isLoadingAlcohols, errorAlcohols, onRefreshAlcohols,
+  additives, isLoadingAdditives, errorAdditives, onRefreshAdditives // Props para aditivos
 }) {
-  const [activeTab, setActiveTab] = useState('fragrances'); // 'fragrances', 'bottles', 'alcohols'
+  const [activeTab, setActiveTab] = useState('fragrances'); // 'fragrances', 'bottles', 'alcohols', 'additives'
 
   return (
     <div>
@@ -45,6 +47,9 @@ function InventoryDashboard({
         </Link>
         <Link to="/inventory/alcohols/add"> {/* Enlace para añadir alcohol */}
           <button>Añadir Alcohol</button>
+        </Link>
+        <Link to="/inventory/additives/add"> {/* Enlace para añadir aditivo */}
+          <button>Añadir Aditivo</button>
         </Link>
         {/* Aquí irán más botones para otros ítems */}
       </div>
@@ -68,6 +73,12 @@ function InventoryDashboard({
           onClick={() => setActiveTab('alcohols')}
         >
           Alcoholes
+        </button>
+        <button 
+          style={activeTab === 'additives' ? {...tabStyles.tabButton, ...tabStyles.activeTab} : tabStyles.tabButton}
+          onClick={() => setActiveTab('additives')}
+        >
+          Aditivos
         </button>
         {/* Próximamente: Tabs para Aditivos, etc. */}
       </div>
@@ -95,6 +106,14 @@ function InventoryDashboard({
           isLoading={isLoadingAlcohols} 
           error={errorAlcohols} 
           onRetry={onRefreshAlcohols}
+        />
+      )}
+      {activeTab === 'additives' && (
+        <AdditiveList 
+          additives={additives} 
+          isLoading={isLoadingAdditives} 
+          error={errorAdditives} 
+          onRetry={onRefreshAdditives}
         />
       )}
       {/* Próximamente: Contenido para otros tabs */}
