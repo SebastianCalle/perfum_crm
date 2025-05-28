@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from typing import List # Added for type hinting
+from typing import List, Optional # Added for type hinting
 from ..models import inventory_model # Import your SQLAlchemy models
 from ..schemas import inventory_schema # Import your Pydantic schemas
 
@@ -174,3 +174,46 @@ def delete_alcohol(db: Session, alcohol_id: int) -> inventory_model.Alcohol | No
     db.delete(db_alcohol)
     db.commit()
     return db_alcohol
+
+# CRUD operations for Additive
+
+def create_additive(db: Session, additive: inventory_schema.AdditiveCreate) -> inventory_model.Additive:
+    db_additive = inventory_model.Additive(**additive.model_dump())
+    db.add(db_additive)
+    db.commit()
+    db.refresh(db_additive)
+    return db_additive
+
+def get_additive(db: Session, additive_id: int) -> inventory_model.Additive | None:
+    return db.query(inventory_model.Additive).filter(inventory_model.Additive.id == additive_id).first()
+
+def get_additives(db: Session, additive_type: Optional[str] = None, skip: int = 0, limit: int = 100) -> List[inventory_model.Additive]: # Added Optional from typing
+    query = db.query(inventory_model.Additive)
+    if additive_type:
+        query = query.filter(inventory_model.Additive.type == additive_type)
+    return query.order_by(inventory_model.Additive.name).offset(skip).limit(limit).all()
+
+def get_additive_by_name(db: Session, name: str) -> inventory_model.Additive | None:
+    return db.query(inventory_model.Additive).filter(inventory_model.Additive.name == name).first()
+
+def update_additive(db: Session, additive_id: int, additive_update: inventory_schema.AdditiveUpdate) -> inventory_model.Additive | None:
+    db_additive = get_additive(db, additive_id=additive_id)
+    if not db_additive:
+        return None
+    update_data = additive_update.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_additive, key, value)
+    db.add(db_additive)
+    db.commit()
+    db.refresh(db_additive)
+    return db_additive
+
+def delete_additive(db: Session, additive_id: int) -> inventory_model.Additive | None:
+    db_additive = get_additive(db, additive_id=additive_id)
+    if not db_additive:
+        return None
+    db.delete(db_additive)
+    db.commit()
+    return db_additive
+
+# We will add more CRUD functions here for Humidifier, etc.

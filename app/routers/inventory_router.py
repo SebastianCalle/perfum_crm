@@ -245,3 +245,74 @@ def delete_existing_alcohol(alcohol_id: int, db: Session = Depends(get_db)):
     if deleted_alcohol is None:
         raise HTTPException(status_code=404, detail=f"Alcohol with ID {alcohol_id} not found for deletion")
     return deleted_alcohol
+
+# --- Additive Endpoints ---
+
+@router.post("/additives/", response_model=inventory_schema.Additive, status_code=201)
+def create_new_additive(additive: inventory_schema.AdditiveCreate, db: Session = Depends(get_db)):
+    """
+    Create a new additive.
+    - **name**: Name of the additive (required, unique).
+    - **type**: e.g., "Enhancer", "Fixative", "Pheromone" (optional).
+    - **cost_per_application_estimate**: Estimated cost for one application (optional).
+    """
+    existing_additive = inventory_crud.get_additive_by_name(db, name=additive.name)
+    if existing_additive:
+        raise HTTPException(status_code=400, detail=f"Additive with name '{additive.name}' already exists.")
+    return inventory_crud.create_additive(db=db, additive=additive)
+
+@router.get("/additives/", response_model=List[inventory_schema.Additive])
+def read_additives(
+    additive_type: Optional[str] = None, # Query parameter for filtering by type
+    skip: int = 0, 
+    limit: int = 100, 
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieve a list of additives, optionally filtered by type.
+    """
+    additives = inventory_crud.get_additives(db, additive_type=additive_type, skip=skip, limit=limit)
+    return additives
+
+@router.get("/additives/{additive_id}", response_model=inventory_schema.Additive)
+def read_additive(additive_id: int, db: Session = Depends(get_db)):
+    """
+    Retrieve a specific additive by its ID.
+    """
+    db_additive = inventory_crud.get_additive(db, additive_id=additive_id)
+    if db_additive is None:
+        raise HTTPException(status_code=404, detail=f"Additive with ID {additive_id} not found")
+    return db_additive
+
+@router.put("/additives/{additive_id}", response_model=inventory_schema.Additive)
+def update_existing_additive(
+    additive_id: int, 
+    additive_update: inventory_schema.AdditiveUpdate, 
+    db: Session = Depends(get_db)
+):
+    """
+    Update an existing additive by its ID.
+    If `name` is provided, it checks for uniqueness against other additives.
+    """
+    # Optional: If name is being updated, check for uniqueness of the new name
+    if additive_update.name is not None:
+        existing_additive_with_new_name = inventory_crud.get_additive_by_name(db, name=additive_update.name)
+        if existing_additive_with_new_name and existing_additive_with_new_name.id != additive_id:
+             raise HTTPException(status_code=400, detail=f"Another additive with name '{additive_update.name}' already exists.")
+            
+    updated_additive = inventory_crud.update_additive(db, additive_id=additive_id, additive_update=additive_update)
+    if updated_additive is None:
+        raise HTTPException(status_code=404, detail=f"Additive with ID {additive_id} not found for update")
+    return updated_additive
+
+@router.delete("/additives/{additive_id}", response_model=inventory_schema.Additive)
+def delete_existing_additive(additive_id: int, db: Session = Depends(get_db)):
+    """
+    Delete an additive by its ID.
+    """
+    deleted_additive = inventory_crud.delete_additive(db, additive_id=additive_id)
+    if deleted_additive is None:
+        raise HTTPException(status_code=404, detail=f"Additive with ID {additive_id} not found for deletion")
+    return deleted_additive
+
+# We will add more endpoints here for Humidifier, etc.
