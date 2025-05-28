@@ -12,4 +12,5 @@ dependencies = [
     "aiosqlite",
     "python-jose[cryptography]",
     "passlib[bcrypt]",
+    "requests>=2.32.3",
 ]
