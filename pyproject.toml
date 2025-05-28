@@ -1,0 +1,15 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Backend service using FastAPI, SQLAlchemy, and SQLite"
+authors = [{name = "Sebastián Calle", email = "jusemonca@gmail.com"}] # Please update email if incorrect
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "SQLAlchemy",
+    "aiosqlite",
+    "python-jose[cryptography]",
+    "passlib[bcrypt]",
+]
