@@ -4,6 +4,8 @@ import FragranceList from './FragranceList';
 import BottleList from './BottleList'; // Importar BottleList
 import AlcoholList from './AlcoholList'; // Importar AlcoholList
 import AdditiveList from './AdditiveList'; // Importar AdditiveList
+import HumidifierList from './HumidifierList'; // Importar HumidifierList
+import HumidifierEssenceList from './HumidifierEssenceList'; // Importar HumidifierEssenceList
 
 // Estilos simples para los tabs (pueden mejorarse mucho con CSS dedicado)
 const tabStyles = {
@@ -11,6 +13,7 @@ const tabStyles = {
     display: 'flex',
     marginBottom: '10px',
     borderBottom: '1px solid #ccc',
+    flexWrap: 'wrap',
   },
   tabButton: {
     padding: '10px 15px',
@@ -30,9 +33,11 @@ function InventoryDashboard({
   fragrances, isLoadingFragrances, errorFragrances, onRefreshFragrances,
   bottles, isLoadingBottles, errorBottles, onRefreshBottles,
   alcohols, isLoadingAlcohols, errorAlcohols, onRefreshAlcohols,
-  additives, isLoadingAdditives, errorAdditives, onRefreshAdditives // Props para aditivos
+  additives, isLoadingAdditives, errorAdditives, onRefreshAdditives,
+  humidifiers, isLoadingHumidifiers, errorHumidifiers, onRefreshHumidifiers,
+  humidifierEssences, isLoadingHumidifierEssences, errorHumidifierEssences, onRefreshHumidifierEssences // Props para aditivos, humidificadores y esencias
 }) {
-  const [activeTab, setActiveTab] = useState('fragrances'); // 'fragrances', 'bottles', 'alcohols', 'additives'
+  const [activeTab, setActiveTab] = useState('fragrances'); // 'fragrances', 'bottles', 'alcohols', 'additives', 'humidifiers', 'humidifierEssences'
 
   return (
     <div>
@@ -50,6 +55,12 @@ function InventoryDashboard({
         </Link>
         <Link to="/inventory/additives/add"> {/* Enlace para añadir aditivo */}
           <button>Añadir Aditivo</button>
+        </Link>
+        <Link to="/inventory/humidifiers/add"> {/* Enlace para añadir humidificador */}
+          <button>Añadir Humidificador</button>
+        </Link>
+        <Link to="/inventory/humidifier-essences/add"> {/* Enlace para añadir esencia */}
+          <button>Añadir Esencia Hum.</button>
         </Link>
         {/* Aquí irán más botones para otros ítems */}
       </div>
@@ -79,6 +90,18 @@ function InventoryDashboard({
           onClick={() => setActiveTab('additives')}
         >
           Aditivos
+        </button>
+        <button 
+          style={activeTab === 'humidifiers' ? {...tabStyles.tabButton, ...tabStyles.activeTab} : tabStyles.tabButton}
+          onClick={() => setActiveTab('humidifiers')}
+        >
+          Humidificadores
+        </button>
+        <button 
+          style={activeTab === 'humidifierEssences' ? {...tabStyles.tabButton, ...tabStyles.activeTab} : tabStyles.tabButton}
+          onClick={() => setActiveTab('humidifierEssences')}
+        >
+          Esencias Hum.
         </button>
         {/* Próximamente: Tabs para Aditivos, etc. */}
       </div>
@@ -114,6 +137,22 @@ function InventoryDashboard({
           isLoading={isLoadingAdditives} 
           error={errorAdditives} 
           onRetry={onRefreshAdditives}
+        />
+      )}
+      {activeTab === 'humidifiers' && (
+        <HumidifierList 
+          humidifiers={humidifiers} 
+          isLoading={isLoadingHumidifiers} 
+          error={errorHumidifiers} 
+          onRetry={onRefreshHumidifiers}
+        />
+      )}
+      {activeTab === 'humidifierEssences' && (
+        <HumidifierEssenceList 
+          humidifierEssences={humidifierEssences} 
+          isLoading={isLoadingHumidifierEssences} 
+          error={errorHumidifierEssences} 
+          onRetry={onRefreshHumidifierEssences}
         />
       )}
       {/* Próximamente: Contenido para otros tabs */}

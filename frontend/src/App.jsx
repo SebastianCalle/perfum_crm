@@ -11,6 +11,8 @@ import AddFragrancePage from './components/inventory/AddFragrancePage';
 import AddBottlePage from './components/inventory/AddBottlePage'; // Importar AddBottlePage
 import AddAlcoholPage from './components/inventory/AddAlcoholPage'; // Importar AddAlcoholPage
 import AddAdditivePage from './components/inventory/AddAdditivePage'; // Importar AddAdditivePage
+import AddHumidifierPage from './components/inventory/AddHumidifierPage'; // Importar AddHumidifierPage
+import AddHumidifierEssencePage from './components/inventory/AddHumidifierEssencePage'; // Importar AddHumidifierEssencePage
 // Importa otros componentes de página aquí cuando los necesites
 
 function App() {
@@ -33,6 +35,16 @@ function App() {
   const [additives, setAdditives] = useState([]);
   const [isLoadingAdditives, setIsLoadingAdditives] = useState(true);
   const [errorAdditives, setErrorAdditives] = useState(null);
+
+  // Estado para Humidificadores
+  const [humidifiers, setHumidifiers] = useState([]);
+  const [isLoadingHumidifiers, setIsLoadingHumidifiers] = useState(true);
+  const [errorHumidifiers, setErrorHumidifiers] = useState(null);
+
+  // Estado para Esencias de Humidificador
+  const [humidifierEssences, setHumidifierEssences] = useState([]);
+  const [isLoadingHumidifierEssences, setIsLoadingHumidifierEssences] = useState(true);
+  const [errorHumidifierEssences, setErrorHumidifierEssences] = useState(null);
 
   // Fetch Fragancias
   const fetchFragrances = useCallback(async () => {
@@ -102,12 +114,48 @@ function App() {
     }
   }, []);
 
+  // Fetch Humidificadores
+  const fetchHumidifiers = useCallback(async () => {
+    setIsLoadingHumidifiers(true);
+    setErrorHumidifiers(null);
+    try {
+      const res = await fetch('http://localhost:8000/inventory/humidifiers/');
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      const data = await res.json();
+      setHumidifiers(data);
+    } catch (err) {
+      setErrorHumidifiers(err.message);
+      setHumidifiers([]);
+    } finally {
+      setIsLoadingHumidifiers(false);
+    }
+  }, []);
+
+  // Fetch Esencias de Humidificador
+  const fetchHumidifierEssences = useCallback(async () => {
+    setIsLoadingHumidifierEssences(true);
+    setErrorHumidifierEssences(null);
+    try {
+      const res = await fetch('http://localhost:8000/inventory/humidifier-essences/'); // Ajusta el endpoint si es necesario
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      const data = await res.json();
+      setHumidifierEssences(data);
+    } catch (err) {
+      setErrorHumidifierEssences(err.message);
+      setHumidifierEssences([]);
+    } finally {
+      setIsLoadingHumidifierEssences(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchFragrances();
     fetchBottles();
     fetchAlcohols();
     fetchAdditives();
-  }, [fetchFragrances, fetchBottles, fetchAlcohols, fetchAdditives]);
+    fetchHumidifiers();
+    fetchHumidifierEssences();
+  }, [fetchFragrances, fetchBottles, fetchAlcohols, fetchAdditives, fetchHumidifiers, fetchHumidifierEssences]);
 
   const handleFragranceAdded = () => {
     fetchFragrances();
@@ -123,6 +171,14 @@ function App() {
 
   const handleAdditiveAdded = () => {
     fetchAdditives();
+  };
+
+  const handleHumidifierAdded = () => {
+    fetchHumidifiers();
+  };
+
+  const handleHumidifierEssenceAdded = () => {
+    fetchHumidifierEssences();
   };
 
   return (
@@ -153,6 +209,14 @@ function App() {
               isLoadingAdditives={isLoadingAdditives}
               errorAdditives={errorAdditives}
               onRefreshAdditives={fetchAdditives}
+              humidifiers={humidifiers} // Pasar datos de humidificadores
+              isLoadingHumidifiers={isLoadingHumidifiers}
+              errorHumidifiers={errorHumidifiers}
+              onRefreshHumidifiers={fetchHumidifiers}
+              humidifierEssences={humidifierEssences}
+              isLoadingHumidifierEssences={isLoadingHumidifierEssences}
+              errorHumidifierEssences={errorHumidifierEssences}
+              onRefreshHumidifierEssences={fetchHumidifierEssences}
             />
           )}
         />
@@ -171,6 +235,14 @@ function App() {
         <Route 
           path="/inventory/additives/add" // Ruta para añadir aditivo
           element={<AddAdditivePage onAdditiveAdded={handleAdditiveAdded} />}
+        />
+        <Route 
+          path="/inventory/humidifiers/add" // Ruta para añadir humidificador
+          element={<AddHumidifierPage onHumidifierAdded={handleHumidifierAdded} />}
+        />
+        <Route 
+          path="/inventory/humidifier-essences/add" // Ruta para añadir esencia
+          element={<AddHumidifierEssencePage onHumidifierEssenceAdded={handleHumidifierEssenceAdded} />}
         />
         {/* Define otras rutas aquí */}
       </Routes>
