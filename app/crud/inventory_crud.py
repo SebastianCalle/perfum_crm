@@ -216,4 +216,42 @@ def delete_additive(db: Session, additive_id: int) -> inventory_model.Additive |
     db.commit()
     return db_additive
 
-# We will add more CRUD functions here for Humidifier, etc.
+# CRUD operations for Humidifier
+
+def create_humidifier(db: Session, humidifier: inventory_schema.HumidifierCreate) -> inventory_model.Humidifier:
+    db_humidifier = inventory_model.Humidifier(**humidifier.model_dump())
+    db.add(db_humidifier)
+    db.commit()
+    db.refresh(db_humidifier)
+    return db_humidifier
+
+def get_humidifier(db: Session, humidifier_id: int) -> inventory_model.Humidifier | None:
+    return db.query(inventory_model.Humidifier).filter(inventory_model.Humidifier.id == humidifier_id).first()
+
+def get_humidifiers(db: Session, skip: int = 0, limit: int = 100) -> List[inventory_model.Humidifier]:
+    return db.query(inventory_model.Humidifier).order_by(inventory_model.Humidifier.name).offset(skip).limit(limit).all()
+
+def get_humidifier_by_name(db: Session, name: str) -> inventory_model.Humidifier | None:
+    return db.query(inventory_model.Humidifier).filter(inventory_model.Humidifier.name == name).first()
+
+def update_humidifier(db: Session, humidifier_id: int, humidifier_update: inventory_schema.HumidifierUpdate) -> inventory_model.Humidifier | None:
+    db_humidifier = get_humidifier(db, humidifier_id=humidifier_id)
+    if not db_humidifier:
+        return None
+    update_data = humidifier_update.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_humidifier, key, value)
+    db.add(db_humidifier)
+    db.commit()
+    db.refresh(db_humidifier)
+    return db_humidifier
+
+def delete_humidifier(db: Session, humidifier_id: int) -> inventory_model.Humidifier | None:
+    db_humidifier = get_humidifier(db, humidifier_id=humidifier_id)
+    if not db_humidifier:
+        return None
+    db.delete(db_humidifier)
+    db.commit()
+    return db_humidifier
+
+# We will add more CRUD functions here for HumidifierEssence, etc.

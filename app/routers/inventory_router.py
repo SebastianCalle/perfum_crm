@@ -315,4 +315,66 @@ def delete_existing_additive(additive_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail=f"Additive with ID {additive_id} not found for deletion")
     return deleted_additive
 
-# We will add more endpoints here for Humidifier, etc.
+# --- Humidifier Endpoints ---
+
+@router.post("/humidifiers/", response_model=inventory_schema.Humidifier, status_code=201)
+def create_new_humidifier(humidifier: inventory_schema.HumidifierCreate, db: Session = Depends(get_db)):
+    """
+    Create a new humidifier.
+    - **name**: Name of the humidifier (required, unique).
+    - **cost_per_unit**: Cost of the humidifier (required).
+    """
+    existing_humidifier = inventory_crud.get_humidifier_by_name(db, name=humidifier.name)
+    if existing_humidifier:
+        raise HTTPException(status_code=400, detail=f"Humidifier with name '{humidifier.name}' already exists.")
+    return inventory_crud.create_humidifier(db=db, humidifier=humidifier)
+
+@router.get("/humidifiers/", response_model=List[inventory_schema.Humidifier])
+def read_humidifiers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """
+    Retrieve a list of humidifiers.
+    """
+    humidifiers = inventory_crud.get_humidifiers(db, skip=skip, limit=limit)
+    return humidifiers
+
+@router.get("/humidifiers/{humidifier_id}", response_model=inventory_schema.Humidifier)
+def read_humidifier(humidifier_id: int, db: Session = Depends(get_db)):
+    """
+    Retrieve a specific humidifier by its ID.
+    """
+    db_humidifier = inventory_crud.get_humidifier(db, humidifier_id=humidifier_id)
+    if db_humidifier is None:
+        raise HTTPException(status_code=404, detail=f"Humidifier with ID {humidifier_id} not found")
+    return db_humidifier
+
+@router.put("/humidifiers/{humidifier_id}", response_model=inventory_schema.Humidifier)
+def update_existing_humidifier(
+    humidifier_id: int, 
+    humidifier_update: inventory_schema.HumidifierUpdate, 
+    db: Session = Depends(get_db)
+):
+    """
+    Update an existing humidifier by its ID.
+    If `name` is provided, it checks for uniqueness against other humidifiers.
+    """
+    if humidifier_update.name is not None:
+        existing_humidifier_with_new_name = inventory_crud.get_humidifier_by_name(db, name=humidifier_update.name)
+        if existing_humidifier_with_new_name and existing_humidifier_with_new_name.id != humidifier_id:
+             raise HTTPException(status_code=400, detail=f"Another humidifier with name '{humidifier_update.name}' already exists.")
+            
+    updated_humidifier = inventory_crud.update_humidifier(db, humidifier_id=humidifier_id, humidifier_update=humidifier_update)
+    if updated_humidifier is None:
+        raise HTTPException(status_code=404, detail=f"Humidifier with ID {humidifier_id} not found for update")
+    return updated_humidifier
+
+@router.delete("/humidifiers/{humidifier_id}", response_model=inventory_schema.Humidifier)
+def delete_existing_humidifier(humidifier_id: int, db: Session = Depends(get_db)):
+    """
+    Delete a humidifier by its ID.
+    """
+    deleted_humidifier = inventory_crud.delete_humidifier(db, humidifier_id=humidifier_id)
+    if deleted_humidifier is None:
+        raise HTTPException(status_code=404, detail=f"Humidifier with ID {humidifier_id} not found for deletion")
+    return deleted_humidifier
+
+# We will add more endpoints here for HumidifierEssence, etc.
