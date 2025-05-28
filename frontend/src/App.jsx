@@ -9,6 +9,7 @@ import HomePage from './components/HomePage'; // Importar HomePage
 import InventoryDashboard from './components/inventory/InventoryDashboard';
 import AddFragrancePage from './components/inventory/AddFragrancePage';
 import AddBottlePage from './components/inventory/AddBottlePage'; // Importar AddBottlePage
+import AddAlcoholPage from './components/inventory/AddAlcoholPage'; // Importar AddAlcoholPage
 // Importa otros componentes de página aquí cuando los necesites
 
 function App() {
@@ -21,6 +22,11 @@ function App() {
   const [bottles, setBottles] = useState([]);
   const [isLoadingBottles, setIsLoadingBottles] = useState(true);
   const [errorBottles, setErrorBottles] = useState(null);
+
+  // Estado para Alcohol
+  const [alcohols, setAlcohols] = useState([]);
+  const [isLoadingAlcohols, setIsLoadingAlcohols] = useState(true);
+  const [errorAlcohols, setErrorAlcohols] = useState(null);
 
   // Fetch Fragancias
   const fetchFragrances = useCallback(async () => {
@@ -56,10 +62,28 @@ function App() {
     }
   }, []);
 
+  // Fetch Alcohol
+  const fetchAlcohols = useCallback(async () => {
+    setIsLoadingAlcohols(true);
+    setErrorAlcohols(null);
+    try {
+      const response = await fetch('http://localhost:8000/inventory/alcohols/'); // Endpoint para alcoholes
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const data = await response.json();
+      setAlcohols(data);
+    } catch (err) {
+      setErrorAlcohols(err.message);
+      setAlcohols([]);
+    } finally {
+      setIsLoadingAlcohols(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchFragrances();
     fetchBottles();
-  }, [fetchFragrances, fetchBottles]);
+    fetchAlcohols();
+  }, [fetchFragrances, fetchBottles, fetchAlcohols]);
 
   const handleFragranceAdded = () => {
     fetchFragrances();
@@ -67,6 +91,10 @@ function App() {
 
   const handleBottleAdded = () => {
     fetchBottles();
+  };
+
+  const handleAlcoholAdded = () => {
+    fetchAlcohols();
   };
 
   return (
@@ -89,6 +117,10 @@ function App() {
               isLoadingBottles={isLoadingBottles}
               errorBottles={errorBottles}
               onRefreshBottles={fetchBottles}
+              alcohols={alcohols} // Pasar datos de alcoholes
+              isLoadingAlcohols={isLoadingAlcohols}
+              errorAlcohols={errorAlcohols}
+              onRefreshAlcohols={fetchAlcohols}
             />
           )}
         />
@@ -99,6 +131,10 @@ function App() {
         <Route 
           path="/inventory/bottles/add" // Ruta para añadir botellas
           element={<AddBottlePage onBottleAdded={handleBottleAdded} />}
+        />
+        <Route 
+          path="/inventory/alcohols/add" // Ruta para añadir alcohol
+          element={<AddAlcoholPage onAlcoholAdded={handleAlcoholAdded} />}
         />
         {/* Define otras rutas aquí */}
       </Routes>

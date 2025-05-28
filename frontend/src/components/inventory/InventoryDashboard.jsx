@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom'; // Importar Link para la navegación
 import FragranceList from './FragranceList';
 import BottleList from './BottleList'; // Importar BottleList
+import AlcoholList from './AlcoholList'; // Importar AlcoholList
 
 // Estilos simples para los tabs (pueden mejorarse mucho con CSS dedicado)
 const tabStyles = {
@@ -26,20 +27,24 @@ const tabStyles = {
 
 function InventoryDashboard({ 
   fragrances, isLoadingFragrances, errorFragrances, onRefreshFragrances,
-  bottles, isLoadingBottles, errorBottles, onRefreshBottles
+  bottles, isLoadingBottles, errorBottles, onRefreshBottles,
+  alcohols, isLoadingAlcohols, errorAlcohols, onRefreshAlcohols // Props para alcohol
 }) {
-  const [activeTab, setActiveTab] = useState('fragrances'); // 'fragrances' o 'bottles'
+  const [activeTab, setActiveTab] = useState('fragrances'); // 'fragrances', 'bottles', 'alcohols'
 
   return (
     <div>
       <h1>Panel de Inventario</h1>
       
-      <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+      <div style={{ marginBottom: '20px', display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
         <Link to="/inventory/fragrances/add">
-          <button>Añadir Nueva Fragancia</button>
+          <button>Añadir Fragancia</button>
         </Link>
-        <Link to="/inventory/bottles/add"> {/* Enlace para añadir botella */}
-          <button>Añadir Nueva Botella</button>
+        <Link to="/inventory/bottles/add">
+          <button>Añadir Botella</button>
+        </Link>
+        <Link to="/inventory/alcohols/add"> {/* Enlace para añadir alcohol */}
+          <button>Añadir Alcohol</button>
         </Link>
         {/* Aquí irán más botones para otros ítems */}
       </div>
@@ -58,7 +63,13 @@ function InventoryDashboard({
         >
           Botellas
         </button>
-        {/* Próximamente: Tabs para Alcohol, Aditivos, etc. */}
+        <button 
+          style={activeTab === 'alcohols' ? {...tabStyles.tabButton, ...tabStyles.activeTab} : tabStyles.tabButton}
+          onClick={() => setActiveTab('alcohols')}
+        >
+          Alcoholes
+        </button>
+        {/* Próximamente: Tabs para Aditivos, etc. */}
       </div>
 
       {/* Contenido de los Tabs */}
@@ -76,6 +87,14 @@ function InventoryDashboard({
           isLoading={isLoadingBottles} 
           error={errorBottles} 
           onRetry={onRefreshBottles}
+        />
+      )}
+      {activeTab === 'alcohols' && (
+        <AlcoholList 
+          alcohols={alcohols} 
+          isLoading={isLoadingAlcohols} 
+          error={errorAlcohols} 
+          onRetry={onRefreshAlcohols}
         />
       )}
       {/* Próximamente: Contenido para otros tabs */}
