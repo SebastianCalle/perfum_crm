@@ -377,4 +377,66 @@ def delete_existing_humidifier(humidifier_id: int, db: Session = Depends(get_db)
         raise HTTPException(status_code=404, detail=f"Humidifier with ID {humidifier_id} not found for deletion")
     return deleted_humidifier
 
-# We will add more endpoints here for HumidifierEssence, etc.
+# --- HumidifierEssence Endpoints ---
+
+@router.post("/humidifier-essences/", response_model=inventory_schema.HumidifierEssence, status_code=201)
+def create_new_humidifier_essence(hf_essence: inventory_schema.HumidifierEssenceCreate, db: Session = Depends(get_db)):
+    """
+    Create a new humidifier essence.
+    - **name**: Name of the essence (required, unique).
+    - **cost_per_bottle**: Cost of the essence bottle (required).
+    """
+    existing_hf_essence = inventory_crud.get_humidifier_essence_by_name(db, name=hf_essence.name)
+    if existing_hf_essence:
+        raise HTTPException(status_code=400, detail=f"Humidifier essence with name '{hf_essence.name}' already exists.")
+    return inventory_crud.create_humidifier_essence(db=db, hf_essence=hf_essence)
+
+@router.get("/humidifier-essences/", response_model=List[inventory_schema.HumidifierEssence])
+def read_humidifier_essences(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """
+    Retrieve a list of humidifier essences.
+    """
+    hf_essences = inventory_crud.get_humidifier_essences(db, skip=skip, limit=limit)
+    return hf_essences
+
+@router.get("/humidifier-essences/{hf_essence_id}", response_model=inventory_schema.HumidifierEssence)
+def read_humidifier_essence(hf_essence_id: int, db: Session = Depends(get_db)):
+    """
+    Retrieve a specific humidifier essence by its ID.
+    """
+    db_hf_essence = inventory_crud.get_humidifier_essence(db, hf_essence_id=hf_essence_id)
+    if db_hf_essence is None:
+        raise HTTPException(status_code=404, detail=f"Humidifier essence with ID {hf_essence_id} not found")
+    return db_hf_essence
+
+@router.put("/humidifier-essences/{hf_essence_id}", response_model=inventory_schema.HumidifierEssence)
+def update_existing_humidifier_essence(
+    hf_essence_id: int, 
+    hf_essence_update: inventory_schema.HumidifierEssenceUpdate, 
+    db: Session = Depends(get_db)
+):
+    """
+    Update an existing humidifier essence by its ID.
+    If `name` is provided, it checks for uniqueness against other essences.
+    """
+    if hf_essence_update.name is not None:
+        existing_hf_essence_with_new_name = inventory_crud.get_humidifier_essence_by_name(db, name=hf_essence_update.name)
+        if existing_hf_essence_with_new_name and existing_hf_essence_with_new_name.id != hf_essence_id:
+             raise HTTPException(status_code=400, detail=f"Another humidifier essence with name '{hf_essence_update.name}' already exists.")
+            
+    updated_hf_essence = inventory_crud.update_humidifier_essence(db, hf_essence_id=hf_essence_id, hf_essence_update=hf_essence_update)
+    if updated_hf_essence is None:
+        raise HTTPException(status_code=404, detail=f"Humidifier essence with ID {hf_essence_id} not found for update")
+    return updated_hf_essence
+
+@router.delete("/humidifier-essences/{hf_essence_id}", response_model=inventory_schema.HumidifierEssence)
+def delete_existing_humidifier_essence(hf_essence_id: int, db: Session = Depends(get_db)):
+    """
+    Delete a humidifier essence by its ID.
+    """
+    deleted_hf_essence = inventory_crud.delete_humidifier_essence(db, hf_essence_id=hf_essence_id)
+    if deleted_hf_essence is None:
+        raise HTTPException(status_code=404, detail=f"Humidifier essence with ID {hf_essence_id} not found for deletion")
+    return deleted_hf_essence
+
+# We will add more endpoints here for FinishedProduct, etc.

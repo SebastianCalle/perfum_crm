@@ -254,4 +254,42 @@ def delete_humidifier(db: Session, humidifier_id: int) -> inventory_model.Humidi
     db.commit()
     return db_humidifier
 
-# We will add more CRUD functions here for HumidifierEssence, etc.
+# CRUD operations for HumidifierEssence
+
+def create_humidifier_essence(db: Session, hf_essence: inventory_schema.HumidifierEssenceCreate) -> inventory_model.HumidifierEssence:
+    db_hf_essence = inventory_model.HumidifierEssence(**hf_essence.model_dump())
+    db.add(db_hf_essence)
+    db.commit()
+    db.refresh(db_hf_essence)
+    return db_hf_essence
+
+def get_humidifier_essence(db: Session, hf_essence_id: int) -> inventory_model.HumidifierEssence | None:
+    return db.query(inventory_model.HumidifierEssence).filter(inventory_model.HumidifierEssence.id == hf_essence_id).first()
+
+def get_humidifier_essences(db: Session, skip: int = 0, limit: int = 100) -> List[inventory_model.HumidifierEssence]:
+    return db.query(inventory_model.HumidifierEssence).order_by(inventory_model.HumidifierEssence.name).offset(skip).limit(limit).all()
+
+def get_humidifier_essence_by_name(db: Session, name: str) -> inventory_model.HumidifierEssence | None:
+    return db.query(inventory_model.HumidifierEssence).filter(inventory_model.HumidifierEssence.name == name).first()
+
+def update_humidifier_essence(db: Session, hf_essence_id: int, hf_essence_update: inventory_schema.HumidifierEssenceUpdate) -> inventory_model.HumidifierEssence | None:
+    db_hf_essence = get_humidifier_essence(db, hf_essence_id=hf_essence_id)
+    if not db_hf_essence:
+        return None
+    update_data = hf_essence_update.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_hf_essence, key, value)
+    db.add(db_hf_essence)
+    db.commit()
+    db.refresh(db_hf_essence)
+    return db_hf_essence
+
+def delete_humidifier_essence(db: Session, hf_essence_id: int) -> inventory_model.HumidifierEssence | None:
+    db_hf_essence = get_humidifier_essence(db, hf_essence_id=hf_essence_id)
+    if not db_hf_essence:
+        return None
+    db.delete(db_hf_essence)
+    db.commit()
+    return db_hf_essence
+
+# We will add more CRUD functions here for FinishedProduct, etc.
