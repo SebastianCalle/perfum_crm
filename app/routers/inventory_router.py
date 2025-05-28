@@ -39,5 +39,57 @@ def create_new_fragrance(
     created_fragrance = inventory_crud.create_fragrance(db=db, fragrance=fragrance)
     return created_fragrance
 
-# We will add more endpoints here for Fragrance (GET, PUT, DELETE) 
-# and then for other inventory items (Bottle, Alcohol, etc.). 
+@router.get("/fragrances/", response_model=List[inventory_schema.Fragrance])
+def read_fragrances(
+    skip: int = 0, 
+    limit: int = 100, 
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieve a list of fragrances with pagination.
+    - **skip**: Number of items to skip (for pagination).
+    - **limit**: Maximum number of items to return (for pagination).
+    """
+    fragrances = inventory_crud.get_fragrances(db, skip=skip, limit=limit)
+    return fragrances
+
+@router.get("/fragrances/{fragrance_id}", response_model=inventory_schema.Fragrance)
+def read_fragrance(fragrance_id: int, db: Session = Depends(get_db)):
+    """
+    Retrieve a specific fragrance by its ID.
+    - **fragrance_id**: The ID of the fragrance to retrieve.
+    """
+    db_fragrance = inventory_crud.get_fragrance(db, fragrance_id=fragrance_id)
+    if db_fragrance is None:
+        raise HTTPException(status_code=404, detail=f"Fragrance with ID {fragrance_id} not found")
+    return db_fragrance
+
+@router.put("/fragrances/{fragrance_id}", response_model=inventory_schema.Fragrance)
+def update_existing_fragrance(
+    fragrance_id: int, 
+    fragrance_update: inventory_schema.FragranceUpdate, 
+    db: Session = Depends(get_db)
+):
+    """
+    Update an existing fragrance by its ID.
+
+    - **fragrance_id**: The ID of the fragrance to update.
+    - **Request body**: Fragrance fields to update (all optional).
+    """
+    updated_fragrance = inventory_crud.update_fragrance(db, fragrance_id=fragrance_id, fragrance_update=fragrance_update)
+    if updated_fragrance is None:
+        raise HTTPException(status_code=404, detail=f"Fragrance with ID {fragrance_id} not found for update")
+    return updated_fragrance
+
+@router.delete("/fragrances/{fragrance_id}", response_model=inventory_schema.Fragrance)
+def delete_existing_fragrance(fragrance_id: int, db: Session = Depends(get_db)):
+    """
+    Delete a fragrance by its ID.
+    - **fragrance_id**: The ID of the fragrance to delete.
+    """
+    deleted_fragrance = inventory_crud.delete_fragrance(db, fragrance_id=fragrance_id)
+    if deleted_fragrance is None:
+        raise HTTPException(status_code=404, detail=f"Fragrance with ID {fragrance_id} not found for deletion")
+    return deleted_fragrance # Returns the deleted item as confirmation
+
+# We will add more endpoints here for other inventory items (Bottle, Alcohol, etc.). 
