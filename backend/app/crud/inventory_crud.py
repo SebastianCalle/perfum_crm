@@ -113,13 +113,19 @@ def delete_bottle(db: Session, bottle_id: int) -> inventory_model.Bottle | None:
 
 def create_alcohol(db: Session, alcohol: inventory_schema.AlcoholCreate) -> inventory_model.Alcohol:
     """Create a new alcohol purchase/batch record."""
-    # Calculate cost_per_ml if not provided or to ensure accuracy
-    calculated_cost_per_ml = alcohol.purchase_unit_cost / alcohol.purchase_unit_volume_ml
     
-    db_alcohol_data = alcohol.model_dump()
-    db_alcohol_data['cost_per_ml'] = calculated_cost_per_ml # Ensure correct cost_per_ml is used
-    # purchase_date will use server_default from the model if not in alcohol_data and not required by schema
-    # If purchase_date is required by schema and not None, it will be used.
+    db_alcohol_data = alcohol.model_dump(exclude_none=True) # Excluir valores None para no sobrescribir defaults del modelo si no se envían
+
+    # Calculate cost_per_ml safely
+    if alcohol.purchase_unit_volume_ml is not None and alcohol.purchase_unit_volume_ml > 0:
+        calculated_cost_per_ml = alcohol.purchase_unit_cost / alcohol.purchase_unit_volume_ml
+    else:
+        calculated_cost_per_ml = 0  # O None, o levantar un HTTPException si se considera un error de validación
+    
+    db_alcohol_data['cost_per_ml'] = calculated_cost_per_ml
+
+    # Si purchase_date es un string del frontend, Pydantic/FastAPI ya debería haberlo convertido a datetime.
+    # Si aún hay problemas con purchase_date, se necesitaría ver el error exacto de Pydantic.
 
     db_alcohol = inventory_model.Alcohol(**db_alcohol_data)
     db.add(db_alcohol)

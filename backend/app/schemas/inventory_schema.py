@@ -77,12 +77,15 @@ class AlcoholBase(BaseModel):
     purchase_date: datetime # Date of this specific purchase
     purchase_unit_cost: float
     purchase_unit_volume_ml: float
-    cost_per_ml: float # Should be calculated: purchase_unit_cost / purchase_unit_volume_ml
+    # cost_per_ml ahora es opcional y tendrá un default que será sobrescrito en el CRUD.
+    # Esto permite que AlcoholCreate no lo exija, pero aún puede estar en el modelo completo.
+    cost_per_ml: Optional[float] = 0.0 
     stock_notes: Optional[str] = None
 
 class AlcoholCreate(AlcoholBase):
-    # cost_per_ml will be populated based on other fields, but can be validated if sent
-    # purchase_date can default to now if not provided by client, handled by model's server_default
+    # No es necesario enviar cost_per_ml desde el cliente,
+    # pero se pueden añadir validaciones aquí si se deseara procesar el objeto completo.
+    # Por ahora, simplemente pasamos para heredar.
     pass
 
 class AlcoholUpdate(BaseModel):
