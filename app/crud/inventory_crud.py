@@ -79,4 +79,32 @@ def delete_fragrance(db: Session, fragrance_id: int) -> inventory_model.Fragranc
     db.commit() # Commit the deletion
     return db_fragrance # The object still holds data before the session expires or is closed
 
-# We will add more CRUD functions here for Bottle, Alcohol, etc.
+
+def create_bottle(db: Session, bottle: inventory_schema.BottleCreate) -> inventory_model.Bottle:
+    db_bottle = inventory_model.Bottle(**bottle.model_dump())
+    db.add(db_bottle)
+    db.commit()
+    db.refresh(db_bottle)
+    return db_bottle
+
+def get_bottle(db: Session, bottle_id: int) -> inventory_model.Bottle | None:
+    return db.query(inventory_model.Bottle).filter(inventory_model.Bottle.id == bottle_id).first()
+
+def get_bottles(db: Session, skip: int = 0, limit: int = 100) -> List[inventory_model.Bottle]:
+    return db.query(inventory_model.Bottle).offset(skip).limit(limit).all()
+
+def get_bottle_by_name(db: Session, name: str) -> inventory_model.Bottle | None:
+    return db.query(inventory_model.Bottle).filter(inventory_model.Bottle.name == name).first()
+
+def update_bottle(db: Session, bottle_id: int, bottle_update: inventory_schema.BottleUpdate) -> inventory_model.Bottle | None:
+    db_bottle = get_bottle(db, bottle_id=bottle_id)
+    if not db_bottle:
+        return None
+
+def delete_bottle(db: Session, bottle_id: int) -> inventory_model.Bottle | None:
+    db_bottle = get_bottle(db, bottle_id=bottle_id)
+    if not db_bottle:
+        return None
+    db.delete(db_bottle)
+    db.commit()
+    return db_bottle
