@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List # Kept for future use, e.g., for listing items
+from typing import List, Optional # Kept for future use, e.g., for listing items
 
 from ..schemas import inventory_schema
 from ..crud import inventory_crud
@@ -155,4 +155,93 @@ def delete_existing_bottle(bottle_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail=f"Bottle with ID {bottle_id} not found for deletion")
     return deleted_bottle
 
+# --- Alcohol Endpoints (Purchase/Batch Tracking) ---
+
+@router.post("/alcohols/", response_model=inventory_schema.Alcohol, status_code=201)
+def create_new_alcohol_purchase(
+    alcohol: inventory_schema.AlcoholCreate, 
+    db: Session = Depends(get_db)
+):
+    """
+    Record a new alcohol purchase/batch.
+    `cost_per_ml` will be calculated from `purchase_unit_cost` and `purchase_unit_volume_ml`.
+    `purchase_date` defaults to now if not provided and model has server_default.
+    """
+    # No unique name check needed here as 'name' is the type and can be repeated for different batches
+    return inventory_crud.create_alcohol(db=db, alcohol=alcohol)
+
+@router.get("/alcohols/", response_model=List[inventory_schema.Alcohol])
+def read_alcohol_purchases(
+    skip: int = 0, 
+    limit: int = 100, 
+    name: Optional[str] = None, # Allow filtering by alcohol type name
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieve a list of alcohol purchase/batch records, optionally filtered by type name.
+    """
+    if name:
+        alcohols = inventory_crud.get_alcohols_by_name(db, name=name, skip=skip, limit=limit)
+    else:
+        alcohols = inventory_crud.get_alcohols(db, skip=skip, limit=limit)
+    return alcohols
+
+@router.get("/alcohols/{alcohol_id}", response_model=inventory_schema.Alcohol)
+def read_single_alcohol_purchase(alcohol_id: int, db: Session = Depends(get_db)):
+    """
+    Retrieve a specific alcohol purchase/batch record by its ID.
+    """
+    db_alcohol = inventory_crud.get_alcohol(db, alcohol_id=alcohol_id)
+    if db_alcohol is None:
+        raise HTTPException(status_code=404, detail=f"Alcohol purchase/batch with ID {alcohol_id} not found")
+    return db_alcohol
+
+@router.put("/alcohols/{alcohol_id}", response_model=inventory_schema.Alcohol)
+def update_existing_alcohol_purchase(
+    alcohol_id: int, 
+    alcohol_update: inventory_schema.AlcoholUpdate, 
+    db: Session = Depends(get_db)
+):
+    """
+    Update an existing alcohol purchase/batch record.
+    `cost_per_ml` will be recalculated if `purchase_unit_cost` or `purchase_unit_volume_ml` are changed.
+    """
+    updated_alcohol = inventory_crud.update_alcohol(db, alcohol_id=alcohol_id, alcohol_update=alcohol_update)
+    if updated_alcohol is None:
+        raise HTTPException(status_code=404, detail=f"Alcohol purchase/batch with ID {alcohol_id} not found for update")
+    return updated_alcohol
+
+@router.delete("/alcohols/{alcohol_id}", response_model=inventory_schema.Alcohol)
+def delete_existing_alcohol_purchase(alcohol_id: int, db: Session = Depends(get_db)):
+    """
+    Delete an alcohol purchase/batch record by its ID.
+    """
+    deleted_alcohol = inventory_crud.delete_alcohol(db, alcohol_id=alcohol_id)
+    if deleted_alcohol is None:
+        raise HTTPException(status_code=404, detail=f"Alcohol purchase/batch with ID {alcohol_id} not found for deletion")
+    return deleted_alcohol
+
 # We will add more endpoints here for other inventory items (Alcohol, Additive, etc.). 
+
+@router.get("/alcohols/", response_model=List[inventory_schema.Alcohol])
+def read_alcohols(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    alcohols = inventory_crud.get_alcohols(db, skip=skip, limit=limit)
+    return alcohols
+
+@router.post("/alcohols/", response_model=inventory_schema.Alcohol, status_code=201)
+def create_new_alcohol(alcohol: inventory_schema.AlcoholCreate, db: Session = Depends(get_db)):
+    return inventory_crud.create_alcohol(db=db, alcohol=alcohol)
+
+@router.put("/alcohols/{alcohol_id}", response_model=inventory_schema.Alcohol)
+def update_existing_alcohol(alcohol_id: int, alcohol_update: inventory_schema.AlcoholUpdate, db: Session = Depends(get_db)):
+    updated_alcohol = inventory_crud.update_alcohol(db, alcohol_id=alcohol_id, alcohol_update=alcohol_update)
+    if updated_alcohol is None:
+        raise HTTPException(status_code=404, detail=f"Alcohol with ID {alcohol_id} not found for update")
+    return updated_alcohol
+
+@router.delete("/alcohols/{alcohol_id}", response_model=inventory_schema.Alcohol)
+def delete_existing_alcohol(alcohol_id: int, db: Session = Depends(get_db)):
+    deleted_alcohol = inventory_crud.delete_alcohol(db, alcohol_id=alcohol_id)
+    if deleted_alcohol is None:
+        raise HTTPException(status_code=404, detail=f"Alcohol with ID {alcohol_id} not found for deletion")
+    return deleted_alcohol

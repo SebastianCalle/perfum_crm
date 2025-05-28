@@ -71,30 +71,34 @@ class Bottle(BottleBase): # Schema for reading/returning bottle data
 # Pydantic Schemas for Alcohol Model
 
 class AlcoholBase(BaseModel):
-    name: str
+    name: str # Type of alcohol, e.g., "Alcohol de Perfumista 96%"
     description: Optional[str] = None
     supplier_name: Optional[str] = None
+    purchase_date: datetime # Date of this specific purchase
     purchase_unit_cost: float
     purchase_unit_volume_ml: float
-    cost_per_ml: float # This could also be calculated on the fly if preferred
+    cost_per_ml: float # Should be calculated: purchase_unit_cost / purchase_unit_volume_ml
     stock_notes: Optional[str] = None
 
 class AlcoholCreate(AlcoholBase):
+    # cost_per_ml will be populated based on other fields, but can be validated if sent
+    # purchase_date can default to now if not provided by client, handled by model's server_default
     pass
 
 class AlcoholUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     supplier_name: Optional[str] = None
+    purchase_date: Optional[datetime] = None
     purchase_unit_cost: Optional[float] = None
     purchase_unit_volume_ml: Optional[float] = None
-    cost_per_ml: Optional[float] = None
+    cost_per_ml: Optional[float] = None # Client might send it, or we might recalculate
     stock_notes: Optional[str] = None
 
 class Alcohol(AlcoholBase): # Schema for reading/returning alcohol data
     id: int
-    created_at: datetime
-    updated_at: Optional[datetime] = None
+    created_at: datetime # Record creation time
+    updated_at: Optional[datetime] = None # Record update time
 
     model_config = ConfigDict(from_attributes=True)
 

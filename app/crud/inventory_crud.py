@@ -108,3 +108,69 @@ def delete_bottle(db: Session, bottle_id: int) -> inventory_model.Bottle | None:
     db.delete(db_bottle)
     db.commit()
     return db_bottle
+
+# CRUD operations for Alcohol (Purchase/Batch Tracking)
+
+def create_alcohol(db: Session, alcohol: inventory_schema.AlcoholCreate) -> inventory_model.Alcohol:
+    """Create a new alcohol purchase/batch record."""
+    # Calculate cost_per_ml if not provided or to ensure accuracy
+    calculated_cost_per_ml = alcohol.purchase_unit_cost / alcohol.purchase_unit_volume_ml
+    
+    db_alcohol_data = alcohol.model_dump()
+    db_alcohol_data['cost_per_ml'] = calculated_cost_per_ml # Ensure correct cost_per_ml is used
+    # purchase_date will use server_default from the model if not in alcohol_data and not required by schema
+    # If purchase_date is required by schema and not None, it will be used.
+
+    db_alcohol = inventory_model.Alcohol(**db_alcohol_data)
+    db.add(db_alcohol)
+    db.commit()
+    db.refresh(db_alcohol)
+    return db_alcohol
+
+def get_alcohol(db: Session, alcohol_id: int) -> inventory_model.Alcohol | None:
+    """Retrieve a specific alcohol purchase/batch by its ID."""
+    return db.query(inventory_model.Alcohol).filter(inventory_model.Alcohol.id == alcohol_id).first()
+
+def get_alcohols(db: Session, skip: int = 0, limit: int = 100) -> List[inventory_model.Alcohol]:
+    """Retrieve a list of alcohol purchase/batch records with pagination."""
+    return db.query(inventory_model.Alcohol).order_by(inventory_model.Alcohol.purchase_date.desc()).offset(skip).limit(limit).all()
+
+def get_alcohols_by_name(db: Session, name: str, skip: int = 0, limit: int = 100) -> List[inventory_model.Alcohol]:
+    """Retrieve alcohol purchase/batch records of a specific type/name with pagination."""
+    return db.query(inventory_model.Alcohol).filter(inventory_model.Alcohol.name == name).order_by(inventory_model.Alcohol.purchase_date.desc()).offset(skip).limit(limit).all()
+
+def update_alcohol(db: Session, alcohol_id: int, alcohol_update: inventory_schema.AlcoholUpdate) -> inventory_model.Alcohol | None:
+    """Update an existing alcohol purchase/batch record."""
+    db_alcohol = get_alcohol(db, alcohol_id=alcohol_id)
+    if not db_alcohol:
+        return None
+
+    update_data = alcohol_update.model_dump(exclude_unset=True)
+
+    # If purchase_unit_cost or purchase_unit_volume_ml are being updated, recalculate cost_per_ml
+    new_purchase_cost = update_data.get('purchase_unit_cost', db_alcohol.purchase_unit_cost)
+    new_purchase_volume = update_data.get('purchase_unit_volume_ml', db_alcohol.purchase_unit_volume_ml)
+    
+    if 'purchase_unit_cost' in update_data or 'purchase_unit_volume_ml' in update_data:
+        if new_purchase_volume > 0: # Avoid division by zero
+            update_data['cost_per_ml'] = new_purchase_cost / new_purchase_volume
+        else:
+            # Handle error or set a default/None if volume can be zero post-update
+            update_data['cost_per_ml'] = 0 # Or some other appropriate value/error handling
+    
+    for key, value in update_data.items():
+        setattr(db_alcohol, key, value)
+    
+    db.add(db_alcohol)
+    db.commit()
+    db.refresh(db_alcohol)
+    return db_alcohol
+
+def delete_alcohol(db: Session, alcohol_id: int) -> inventory_model.Alcohol | None:
+    """Delete an alcohol purchase/batch record."""
+    db_alcohol = get_alcohol(db, alcohol_id=alcohol_id)
+    if not db_alcohol:
+        return None
+    db.delete(db_alcohol)
+    db.commit()
+    return db_alcohol

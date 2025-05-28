@@ -46,25 +46,27 @@ class Alcohol(Base):
     __tablename__ = "alcohols"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, index=True, nullable=False)
+    name = Column(String, index=True, nullable=False) # Type of alcohol, e.g., "Alcohol de Perfumista 96%" - CAN BE REPEATED
     description = Column(Text, nullable=True)
     supplier_name = Column(String, nullable=True)
+    purchase_date = Column(DateTime(timezone=True), nullable=False, server_default=func.now()) # Date of this specific purchase
     
-    purchase_unit_cost = Column(Float, nullable=False) # Cost for the entire purchase unit (e.g., a 5-gallon drum)
-    purchase_unit_volume_ml = Column(Float, nullable=False) # Volume of that purchase unit in milliliters
+    purchase_unit_cost = Column(Float, nullable=False) # Cost for this specific purchase unit
+    purchase_unit_volume_ml = Column(Float, nullable=False) # Volume of this specific purchase unit in milliliters
     
-    # cost_per_ml can be derived (purchase_unit_cost / purchase_unit_volume_ml)
-    # Storing it can be for convenience or if pre-calculation is preferred.
-    cost_per_ml = Column(Float, nullable=False) 
+    cost_per_ml = Column(Float, nullable=False) # Calculated for this purchase: purchase_unit_cost / purchase_unit_volume_ml
     
-    stock_notes = Column(Text, nullable=True) # e.g., "2 x 5-gallon drums in stock"
+    # Optional: track stock for THIS SPECIFIC BATCH/PURCHASE if needed
+    # current_stock_ml_of_batch = Column(Float, nullable=True, default=0.0) 
 
-    # Timestamps
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    stock_notes = Column(Text, nullable=True) # General notes, e.g., lot number, or overall stock if not tracking by batch
+
+    # Timestamps for the record itself
+    created_at = Column(DateTime(timezone=True), server_default=func.now()) # Record creation time
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now()) # Record update time
 
     def __repr__(self):
-        return f"<Alcohol(name='{self.name}', cost_per_ml={self.cost_per_ml})>"
+        return f"<AlcoholPurchase(name='{self.name}', date='{self.purchase_date}', cost_per_ml={self.cost_per_ml})>"
 
 class Additive(Base):
     __tablename__ = "additives"
