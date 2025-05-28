@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware # Import CORSMiddleware
 
 # Database imports
 from .database import engine, Base # Import Base and engine
@@ -34,6 +35,21 @@ app = FastAPI(
 
 # Include routers from other modules
 app.include_router(inventory_router.router) # Register inventory routes
+
+# Define allowed origins for CORS
+origins = [
+    "http://localhost:5173",  # Default Vite port
+    "http://localhost:3000",  # Common React dev port
+    # Add other origins if needed, e.g., your deployed frontend URL
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins, # Allows specific origins
+    allow_credentials=True, # Allows cookies to be included in requests
+    allow_methods=["*"],    # Allows all methods (GET, POST, PUT, etc.)
+    allow_headers=["*"],    # Allows all headers
+)
 
 @app.get("/")
 async def root():
