@@ -22,20 +22,20 @@ function InventoryDashboard({
   const getTabClassName = (tabName) => {
     let className = "py-3 px-5 cursor-pointer border-b-2 font-medium text-sm leading-5 focus:outline-none transition-colors duration-150 ease-in-out mr-2";
     if (activeTab === tabName) {
-      className += " text-primary-900 border-primary-900";
+      className += " text-primary-600 border-primary-600";
     } else {
-      className += " text-primary-600 hover:text-primary-900 border-transparent hover:border-primary-300";
+      className += " text-primary-900 hover:text-primary-600 border-transparent hover:border-primary-300";
     }
     return className;
   };
 
-  const buttonStyle = "bg-primary-900 hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-opacity-75 transition-all duration-150 ease-in-out text-sm";
+  const buttonStyle = "bg-primary-600 hover:bg-primary-900 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-opacity-75 transition-all duration-150 ease-in-out text-sm";
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6 border border-primary-100">
-      <h1 className="text-3xl font-bold text-primary-900 mb-6">Panel de Inventario</h1>
+    <div className="bg-primary-100 shadow-lg rounded-lg p-6 border border-primary-200" style={{ backgroundColor: '#2A2A2A', borderColor: '#3A3A3A' }}>
+      <h1 className="text-3xl font-bold text-primary-900 mb-6" style={{ color: '#F5F5DC' }}>Panel de Inventario</h1>
       
-      <div className="border-b border-primary-200 mb-6">
+      <div className="border-b border-primary-200 mb-6" style={{ borderColor: '#3A3A3A' }}>
         <nav className="-mb-px flex flex-wrap" aria-label="Tabs">
           <button className={getTabClassName('fragrances')} onClick={() => setActiveTab('fragrances')}>Fragancias</button>
           <button className={getTabClassName('bottles')} onClick={() => setActiveTab('bottles')}>Botellas</button>
@@ -50,7 +50,7 @@ function InventoryDashboard({
       {activeTab === 'fragrances' && (
         <section>
           <div className="flex justify-between items-center mb-10">
-            <h2 className="text-2xl font-semibold text-primary-900">Gestión de Fragancias</h2>
+            <h2 className="text-2xl font-semibold text-primary-900" style={{ color: '#F5F5DC' }}>Gestión de Fragancias</h2>
             <Link to="/inventory/fragrances/add">
               <button className={buttonStyle}>Añadir Fragancia</button>
             </Link>
@@ -61,7 +61,7 @@ function InventoryDashboard({
       {activeTab === 'bottles' && (
         <section>
           <div className="flex justify-between items-center mb-10">
-            <h2 className="text-2xl font-semibold text-primary-900">Gestión de Botellas</h2>
+            <h2 className="text-2xl font-semibold text-primary-900" style={{ color: '#F5F5DC' }}>Gestión de Botellas</h2>
             <Link to="/inventory/bottles/add">
               <button className={buttonStyle}>Añadir Botella</button>
             </Link>
@@ -72,7 +72,7 @@ function InventoryDashboard({
       {activeTab === 'alcohols' && (
         <section>
           <div className="flex justify-between items-center mb-10">
-            <h2 className="text-2xl font-semibold text-primary-900">Gestión de Alcoholes</h2>
+            <h2 className="text-2xl font-semibold text-primary-900" style={{ color: '#F5F5DC' }}>Gestión de Alcoholes</h2>
             <Link to="/inventory/alcohols/add">
               <button className={buttonStyle}>Añadir Alcohol</button>
             </Link>
@@ -83,7 +83,7 @@ function InventoryDashboard({
       {activeTab === 'additives' && (
         <section>
           <div className="flex justify-between items-center mb-10">
-            <h2 className="text-2xl font-semibold text-primary-900">Gestión de Aditivos</h2>
+            <h2 className="text-2xl font-semibold text-primary-900" style={{ color: '#F5F5DC' }}>Gestión de Aditivos</h2>
             <Link to="/inventory/additives/add">
               <button className={buttonStyle}>Añadir Aditivo</button>
             </Link>
@@ -94,7 +94,7 @@ function InventoryDashboard({
       {activeTab === 'humidifiers' && (
         <section>
           <div className="flex justify-between items-center mb-10">
-            <h2 className="text-2xl font-semibold text-primary-900">Gestión de Humidificadores</h2>
+            <h2 className="text-2xl font-semibold text-primary-900" style={{ color: '#F5F5DC' }}>Gestión de Humidificadores</h2>
             <Link to="/inventory/humidifiers/add">
               <button className={buttonStyle}>Añadir Humidificador</button>
             </Link>
@@ -105,7 +105,7 @@ function InventoryDashboard({
       {activeTab === 'humidifierEssences' && (
         <section>
           <div className="flex justify-between items-center mb-10">
-            <h2 className="text-2xl font-semibold text-primary-900">Gestión de Esencias Hum.</h2>
+            <h2 className="text-2xl font-semibold text-primary-900" style={{ color: '#F5F5DC' }}>Gestión de Esencias Hum.</h2>
             <Link to="/inventory/humidifier-essences/add">
               <button className={buttonStyle}>Añadir Esencia Hum.</button>
             </Link>
@@ -116,7 +116,7 @@ function InventoryDashboard({
       {activeTab === 'finishedProducts' && (
         <section>
           <div className="flex justify-between items-center mb-10">
-            <h2 className="text-2xl font-semibold text-primary-900">Gestión de Productos Terminados</h2>
+            <h2 className="text-2xl font-semibold text-primary-900" style={{ color: '#F5F5DC' }}>Gestión de Productos Terminados</h2>
             <Link to="/inventory/finished-products/add">
               <button className={buttonStyle}>Añadir Producto Terminado</button>
             </Link>

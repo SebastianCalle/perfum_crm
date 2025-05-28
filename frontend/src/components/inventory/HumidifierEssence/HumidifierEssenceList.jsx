@@ -1,20 +1,21 @@
 import React from 'react';
 
-// Componente presentacional para mostrar la lista de esencias de humidificador con tabla elegante y sofisticada
+// Componente presentacional para mostrar la lista de esencias para humidificador con tabla elegante y sofisticada
 function HumidifierEssenceList({ humidifierEssences, isLoading, error, onRetry }) {
   if (isLoading) {
-    return <div className="p-4 text-center text-gray-600 bg-gray-50 rounded-lg w-full">Cargando esencias de humidificador...</div>;
+    return <div className="p-4 text-center rounded-lg w-full" style={{ backgroundColor: '#2A2A2A', color: '#B8B8B8' }}>Cargando esencias...</div>;
   }
 
   if (error) {
     return (
-      <div className="p-4 bg-red-50 border border-red-300 text-red-700 rounded-md w-full">
-        <p className="font-semibold">Error al cargar esencias de humidificador:</p>
+      <div className="p-4 border rounded-md w-full" style={{ backgroundColor: '#3A1A1A', borderColor: '#5A2A2A', color: '#FF9999' }}>
+        <p className="font-semibold">Error al cargar esencias:</p>
         <p>{typeof error === 'object' ? JSON.stringify(error) : error}</p>
         {onRetry && (
           <button 
             onClick={onRetry} 
-            className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+            className="mt-2 px-4 py-2 text-white rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+            style={{ backgroundColor: '#CC4444' }}
           >
             Reintentar
           </button>
@@ -24,18 +25,18 @@ function HumidifierEssenceList({ humidifierEssences, isLoading, error, onRetry }
   }
 
   if (humidifierEssences.length === 0) {
-    return <div className="p-4 text-center text-gray-600 bg-gray-50 rounded-lg w-full">No hay esencias de humidificador registradas.</div>;
+    return <div className="p-4 text-center rounded-lg w-full" style={{ backgroundColor: '#2A2A2A', color: '#B8B8B8' }}>No hay esencias registradas.</div>;
   }
 
-  // Paleta de colores elegante y sofisticada
+  // Paleta de colores elegante y sofisticada para tema oscuro
   const tableStyle = {
     width: '100%',
     borderCollapse: 'collapse',
-    border: '1px solid #e5e7eb',
-    backgroundColor: '#ffffff',
+    border: '1px solid #3A3A3A',
+    backgroundColor: '#2A2A2A',
     borderRadius: '8px',
     overflow: 'hidden',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)'
   };
 
   const thStyle = {
@@ -43,39 +44,39 @@ function HumidifierEssenceList({ humidifierEssences, isLoading, error, onRetry }
     textAlign: 'left',
     fontSize: '13px',
     fontWeight: '600',
-    color: '#374151',
+    color: '#D4AF37',
     textTransform: 'uppercase',
     letterSpacing: '0.05em',
-    border: '1px solid #e5e7eb',
-    backgroundColor: '#f9fafb',
-    borderBottom: '2px solid #d1d5db'
+    border: '1px solid #4A4A4A',
+    backgroundColor: '#3A3A3A',
+    borderBottom: '2px solid #4A4A4A'
   };
 
   const tdStyle = {
     padding: '14px 20px',
     fontSize: '14px',
-    color: '#4b5563',
-    border: '1px solid #f3f4f6',
-    backgroundColor: '#ffffff',
+    color: '#B8B8B8',
+    border: '1px solid #4A4A4A',
+    backgroundColor: '#2A2A2A',
     transition: 'background-color 0.15s ease'
   };
 
   const tdFirstStyle = {
     ...tdStyle,
     fontWeight: '500',
-    color: '#1f2937'
+    color: '#F5F5DC'
   };
 
   const tdNumberStyle = {
     ...tdStyle,
     textAlign: 'right',
     fontFamily: 'monospace',
-    color: '#6b7280'
+    color: '#D4AF37'
   };
 
-  const evenRowColor = '#ffffff';
-  const oddRowColor = '#f8fafc';
-  const hoverColor = '#f1f5f9';
+  const evenRowColor = '#2A2A2A';
+  const oddRowColor = '#323232';
+  const hoverColor = '#3A3A3A';
 
   return (
     <div className="overflow-x-auto w-full" style={{ backgroundColor: 'transparent' }}>
@@ -83,10 +84,10 @@ function HumidifierEssenceList({ humidifierEssences, isLoading, error, onRetry }
         <thead>
           <tr>
             <th style={thStyle}>Nombre</th>
+            <th style={thStyle}>Aroma</th>
             <th style={thStyle}>Descripción</th>
             <th style={thStyle}>Proveedor</th>
-            <th style={thStyle}>Costo/Botella</th>
-            <th style={thStyle}>Vol. Botella</th>
+            <th style={thStyle}>Costo/Unidad</th>
             <th style={thStyle}>Stock</th>
             <th style={thStyle}>Stock Mín.</th>
           </tr>
@@ -107,10 +108,10 @@ function HumidifierEssenceList({ humidifierEssences, isLoading, error, onRetry }
               }}
             >
               <td style={tdFirstStyle}>{essence.name}</td>
+              <td style={tdStyle}>{essence.scent || '-'}</td>
               <td style={tdStyle}>{essence.description || '-'}</td>
               <td style={tdStyle}>{essence.supplier_name || '-'}</td>
-              <td style={tdNumberStyle}>${essence.cost_per_bottle}</td>
-              <td style={tdNumberStyle}>{essence.bottle_volume_ml ? `${essence.bottle_volume_ml}ml` : '-'}</td>
+              <td style={tdNumberStyle}>${essence.cost_per_unit}</td>
               <td style={tdNumberStyle}>{essence.stock_units} un.</td>
               <td style={tdNumberStyle}>{essence.min_stock_units} un.</td>
             </tr>

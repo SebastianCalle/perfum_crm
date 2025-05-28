@@ -70,10 +70,10 @@ function AddFragranceForm({ onFragranceAdded }) {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg border border-primary-200 p-8">
+    <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg border border-primary-200 p-8" style={{ backgroundColor: '#2A2A2A', borderColor: '#3A3A3A' }}>
       <div className="mb-8">
-        <h3 className="text-2xl font-bold text-primary-900 mb-2">Añadir Nueva Fragancia</h3>
-        <p className="text-primary-600">Complete los campos para registrar una nueva fragancia en el inventario.</p>
+        <h3 className="text-2xl font-bold text-primary-900 mb-2" style={{ color: '#F5F5DC' }}>Añadir Nueva Fragancia</h3>
+        <p className="text-primary-600" style={{ color: '#B8B8B8' }}>Complete los campos para registrar una nueva fragancia en el inventario.</p>
       </div>
 
       {/* Mensajes de estado */}
@@ -104,7 +104,7 @@ function AddFragranceForm({ onFragranceAdded }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Nombre Interno */}
           <div>
-            <label htmlFor="internalName" className="block text-sm font-semibold text-primary-900 mb-2">
+            <label htmlFor="internalName" className="block text-sm font-semibold text-primary-900 mb-2" style={{ color: '#F5F5DC' }}>
               Nombre Interno <span className="text-red-500">*</span>
             </label>
             <input
@@ -114,13 +114,14 @@ function AddFragranceForm({ onFragranceAdded }) {
               onChange={(e) => setInternalName(e.target.value)}
               required
               className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition-colors placeholder-primary-300"
+              style={{ backgroundColor: '#3A3A3A', borderColor: '#4A4A4A', color: '#F5F5DC' }}
               placeholder="Ej: Fragint-001"
             />
           </div>
 
           {/* Nombre Inspiración */}
           <div>
-            <label htmlFor="inspirationName" className="block text-sm font-semibold text-primary-900 mb-2">
+            <label htmlFor="inspirationName" className="block text-sm font-semibold text-primary-900 mb-2" style={{ color: '#F5F5DC' }}>
               Nombre Inspiración
             </label>
             <input
@@ -129,13 +130,14 @@ function AddFragranceForm({ onFragranceAdded }) {
               value={inspirationName}
               onChange={(e) => setInspirationName(e.target.value)}
               className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition-colors placeholder-primary-300"
+              style={{ backgroundColor: '#3A3A3A', borderColor: '#4A4A4A', color: '#F5F5DC' }}
               placeholder="Ej: Inspiration C-79"
             />
           </div>
 
           {/* Casa */}
           <div>
-            <label htmlFor="house" className="block text-sm font-semibold text-primary-900 mb-2">
+            <label htmlFor="house" className="block text-sm font-semibold text-primary-900 mb-2" style={{ color: '#F5F5DC' }}>
               Casa
             </label>
             <input
@@ -144,13 +146,14 @@ function AddFragranceForm({ onFragranceAdded }) {
               value={house}
               onChange={(e) => setHouse(e.target.value)}
               className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition-colors placeholder-primary-300"
+              style={{ backgroundColor: '#3A3A3A', borderColor: '#4A4A4A', color: '#F5F5DC' }}
               placeholder="Ej: House X"
             />
           </div>
 
           {/* Proveedor */}
           <div>
-            <label htmlFor="supplierName" className="block text-sm font-semibold text-primary-900 mb-2">
+            <label htmlFor="supplierName" className="block text-sm font-semibold text-primary-900 mb-2" style={{ color: '#F5F5DC' }}>
               Proveedor
             </label>
             <input
@@ -159,6 +162,7 @@ function AddFragranceForm({ onFragranceAdded }) {
               value={supplierName}
               onChange={(e) => setSupplierName(e.target.value)}
               className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition-colors placeholder-primary-300"
+              style={{ backgroundColor: '#3A3A3A', borderColor: '#4A4A4A', color: '#F5F5DC' }}
               placeholder="Ej: Fragrance Supplies Co."
             />
           </div>
@@ -166,7 +170,7 @@ function AddFragranceForm({ onFragranceAdded }) {
 
         {/* Descripción - Campo completo */}
         <div>
-          <label htmlFor="description" className="block text-sm font-semibold text-primary-900 mb-2">
+          <label htmlFor="description" className="block text-sm font-semibold text-primary-900 mb-2" style={{ color: '#F5F5DC' }}>
             Descripción
           </label>
           <textarea
@@ -175,6 +179,7 @@ function AddFragranceForm({ onFragranceAdded }) {
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
             className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition-colors placeholder-primary-300 resize-none"
+            style={{ backgroundColor: '#3A3A3A', borderColor: '#4A4A4A', color: '#F5F5DC' }}
             placeholder="Descripción de la fragancia..."
           />
         </div>
@@ -183,11 +188,11 @@ function AddFragranceForm({ onFragranceAdded }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Costo por Gramo */}
           <div>
-            <label htmlFor="costPerG" className="block text-sm font-semibold text-primary-900 mb-2">
+            <label htmlFor="costPerG" className="block text-sm font-semibold text-primary-900 mb-2" style={{ color: '#F5F5DC' }}>
               Costo por Gramo <span className="text-red-500">*</span>
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-3 text-primary-600 font-medium">$</span>
+              <span className="absolute left-3 top-3 text-primary-600 font-medium" style={{ color: '#D4AF37' }}>$</span>
               <input
                 id="costPerG"
                 type="number"
@@ -196,6 +201,7 @@ function AddFragranceForm({ onFragranceAdded }) {
                 onChange={(e) => setCostPerG(e.target.value)}
                 required
                 className="w-full pl-8 pr-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition-colors"
+                style={{ backgroundColor: '#3A3A3A', borderColor: '#4A4A4A', color: '#F5F5DC' }}
                 placeholder="0.00"
               />
             </div>
@@ -203,7 +209,7 @@ function AddFragranceForm({ onFragranceAdded }) {
 
           {/* Stock */}
           <div>
-            <label htmlFor="stockG" className="block text-sm font-semibold text-primary-900 mb-2">
+            <label htmlFor="stockG" className="block text-sm font-semibold text-primary-900 mb-2" style={{ color: '#F5F5DC' }}>
               Stock (g)
             </label>
             <input
@@ -213,13 +219,14 @@ function AddFragranceForm({ onFragranceAdded }) {
               value={stockG}
               onChange={(e) => setStockG(e.target.value)}
               className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition-colors"
+              style={{ backgroundColor: '#3A3A3A', borderColor: '#4A4A4A', color: '#F5F5DC' }}
               placeholder="0.00"
             />
           </div>
 
           {/* Stock Mínimo */}
           <div>
-            <label htmlFor="minStockG" className="block text-sm font-semibold text-primary-900 mb-2">
+            <label htmlFor="minStockG" className="block text-sm font-semibold text-primary-900 mb-2" style={{ color: '#F5F5DC' }}>
               Stock Mínimo (g)
             </label>
             <input
@@ -229,13 +236,14 @@ function AddFragranceForm({ onFragranceAdded }) {
               value={minStockG}
               onChange={(e) => setMinStockG(e.target.value)}
               className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition-colors"
+              style={{ backgroundColor: '#3A3A3A', borderColor: '#4A4A4A', color: '#F5F5DC' }}
               placeholder="0.00"
             />
           </div>
         </div>
 
         {/* Botón de envío */}
-        <div className="pt-6 border-t border-primary-200">
+        <div className="pt-6 border-t border-primary-200" style={{ borderColor: '#3A3A3A' }}>
           <button
             type="submit"
             disabled={isLoading}
@@ -244,6 +252,10 @@ function AddFragranceForm({ onFragranceAdded }) {
                 ? 'bg-primary-300 text-primary-600 cursor-not-allowed'
                 : 'bg-primary-900 hover:bg-primary-600 text-white shadow-lg hover:shadow-xl'
             }`}
+            style={{
+              backgroundColor: isLoading ? '#4A4A4A' : '#D4AF37',
+              color: isLoading ? '#B8B8B8' : '#1A1A1A'
+            }}
           >
             {isLoading ? (
               <div className="flex items-center justify-center">

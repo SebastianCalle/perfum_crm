@@ -13,7 +13,7 @@ function AddFragrancePage({ onFragranceAdded }) {
   };
 
   return (
-    <div className="min-h-screen bg-light py-8">
+    <div className="min-h-screen py-8" style={{ backgroundColor: '#1A1A1A' }}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Navigation Header */}
         <div className="mb-8">
@@ -41,17 +41,17 @@ function AddFragrancePage({ onFragranceAdded }) {
           <nav className="mt-4" aria-label="Breadcrumb">
             <ol className="flex items-center space-x-2 text-sm text-primary-600">
               <li>
-                <Link to="/inventory" className="hover:text-primary-900 transition-colors">
+                <Link to="/inventory" className="hover:text-primary-900 transition-colors" style={{ color: '#B8B8B8' }}>
                   Inventario
                 </Link>
               </li>
               <li>
-                <svg className="w-4 h-4 text-primary-300" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 text-primary-300" fill="currentColor" viewBox="0 0 20 20" style={{ color: '#4A4A4A' }}>
                   <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                 </svg>
               </li>
               <li>
-                <span className="text-primary-900 font-medium">Añadir Fragancia</span>
+                <span className="text-primary-900 font-medium" style={{ color: '#F5F5DC' }}>Añadir Fragancia</span>
               </li>
             </ol>
           </nav>
@@ -59,10 +59,10 @@ function AddFragrancePage({ onFragranceAdded }) {
 
         {/* Page Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-primary-900 mb-4">
+          <h1 className="text-4xl font-bold text-primary-900 mb-4" style={{ color: '#F5F5DC' }}>
             Nueva Fragancia
           </h1>
-          <p className="text-lg text-primary-600 max-w-2xl mx-auto">
+          <p className="text-lg text-primary-600 max-w-2xl mx-auto" style={{ color: '#B8B8B8' }}>
             Registre una nueva fragancia en el sistema de inventario completando todos los campos requeridos.
           </p>
         </div>

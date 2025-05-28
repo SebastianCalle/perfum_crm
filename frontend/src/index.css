@@ -1,15 +1,56 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary-900: #333446;
-  --color-primary-600: #7F8CAA;
-  --color-primary-300: #B8CFCE;
-  --color-primary-200: #B8CFCE;
-  --color-primary-100: #EAEFEF;
+  /* Gallery Essence - Tema Oscuro Lujoso */
+  --color-primary-900: #F5F5DC; /* Beige crema - Textos principales en fondo oscuro */
+  --color-primary-600: #D4AF37; /* Dorado clásico - Acentos de lujo */
+  --color-primary-300: #4A4A4A; /* Gris oscuro - Elementos secundarios */
+  --color-primary-200: #3A3A3A; /* Gris más oscuro - Bordes sutiles */
+  --color-primary-100: #2A2A2A; /* Gris muy oscuro - Fondos de contenido */
+  
+  /* Backgrounds oscuros */
+  --color-background: #1A1A1A;   /* Negro profundo - Fondo principal */
+  --color-surface: #2A2A2A;      /* Gris muy oscuro - Tarjetas y contenedores */
+  --color-border: #3A3A3A;       /* Gris oscuro - Bordes */
+  
+  /* Textos en tema oscuro */
+  --color-text-primary: #F5F5DC; /* Beige crema - Texto principal */
+  --color-text-secondary: #B8B8B8; /* Gris claro - Texto secundario */
+  --color-accent-gold: #D4AF37;   /* Dorado - Acentos especiales */
   
   /* Alias simples para fácil uso */
-  --color-dark: #333446;
-  --color-medium: #7F8CAA;
-  --color-accent: #B8CFCE;
-  --color-light: #EAEFEF;
+  --color-dark: #1A1A1A;      /* Fondo principal */
+  --color-medium: #D4AF37;    /* Dorado clásico */
+  --color-accent: #4A4A4A;    /* Gris oscuro */
+  --color-light: #F5F5DC;     /* Beige crema para textos */
+}
+
+/* Estilos globales para el tema oscuro */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+#root {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-background);
+  min-height: 100vh;
+}
+
+/* Asegurar que todos los contenedores principales mantengan el fondo oscuro */
+.bg-dark {
+  background-color: var(--color-background) !important;
 }
