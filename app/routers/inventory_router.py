@@ -439,4 +439,73 @@ def delete_existing_humidifier_essence(hf_essence_id: int, db: Session = Depends
         raise HTTPException(status_code=404, detail=f"Humidifier essence with ID {hf_essence_id} not found for deletion")
     return deleted_hf_essence
 
-# We will add more endpoints here for FinishedProduct, etc.
+# --- FinishedProduct Endpoints ---
+
+@router.post("/finished-products/", response_model=inventory_schema.FinishedProduct, status_code=201)
+def create_new_finished_product(product: inventory_schema.FinishedProductCreate, db: Session = Depends(get_db)):
+    """
+    Create a new finished product (e.g., body splash, scented cream).
+    - **name**: Name of the product (required, unique).
+    - **product_type**: Type of product, e.g., "Body Splash" (required).
+    - **cost_price**: Cost to acquire or produce (required).
+    - **sale_price**: Price to sell to customer (required).
+    """
+    existing_product = inventory_crud.get_finished_product_by_name(db, name=product.name)
+    if existing_product:
+        raise HTTPException(status_code=400, detail=f"Finished product with name '{product.name}' already exists.")
+    return inventory_crud.create_finished_product(db=db, product=product)
+
+@router.get("/finished-products/", response_model=List[inventory_schema.FinishedProduct])
+def read_finished_products(
+    product_type: Optional[str] = None, # Query parameter for filtering
+    skip: int = 0, 
+    limit: int = 100, 
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieve a list of finished products, optionally filtered by product_type.
+    """
+    products = inventory_crud.get_finished_products(db, product_type=product_type, skip=skip, limit=limit)
+    return products
+
+@router.get("/finished-products/{product_id}", response_model=inventory_schema.FinishedProduct)
+def read_finished_product(product_id: int, db: Session = Depends(get_db)):
+    """
+    Retrieve a specific finished product by its ID.
+    """
+    db_product = inventory_crud.get_finished_product(db, product_id=product_id)
+    if db_product is None:
+        raise HTTPException(status_code=404, detail=f"Finished product with ID {product_id} not found")
+    return db_product
+
+@router.put("/finished-products/{product_id}", response_model=inventory_schema.FinishedProduct)
+def update_existing_finished_product(
+    product_id: int, 
+    product_update: inventory_schema.FinishedProductUpdate, 
+    db: Session = Depends(get_db)
+):
+    """
+    Update an existing finished product by its ID.
+    If `name` is provided, it checks for uniqueness against other products.
+    """
+    if product_update.name is not None:
+        existing_product_with_new_name = inventory_crud.get_finished_product_by_name(db, name=product_update.name)
+        if existing_product_with_new_name and existing_product_with_new_name.id != product_id:
+             raise HTTPException(status_code=400, detail=f"Another finished product with name '{product_update.name}' already exists.")
+            
+    updated_product = inventory_crud.update_finished_product(db, product_id=product_id, product_update=product_update)
+    if updated_product is None:
+        raise HTTPException(status_code=404, detail=f"Finished product with ID {product_id} not found for update")
+    return updated_product
+
+@router.delete("/finished-products/{product_id}", response_model=inventory_schema.FinishedProduct)
+def delete_existing_finished_product(product_id: int, db: Session = Depends(get_db)):
+    """
+    Delete a finished product by its ID.
+    """
+    deleted_product = inventory_crud.delete_finished_product(db, product_id=product_id)
+    if deleted_product is None:
+        raise HTTPException(status_code=404, detail=f"Finished product with ID {product_id} not found for deletion")
+    return deleted_product
+
+# End of Inventory Endpoints

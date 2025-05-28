@@ -292,4 +292,45 @@ def delete_humidifier_essence(db: Session, hf_essence_id: int) -> inventory_mode
     db.commit()
     return db_hf_essence
 
-# We will add more CRUD functions here for FinishedProduct, etc.
+# CRUD operations for FinishedProduct
+
+def create_finished_product(db: Session, product: inventory_schema.FinishedProductCreate) -> inventory_model.FinishedProduct:
+    db_product = inventory_model.FinishedProduct(**product.model_dump())
+    db.add(db_product)
+    db.commit()
+    db.refresh(db_product)
+    return db_product
+
+def get_finished_product(db: Session, product_id: int) -> inventory_model.FinishedProduct | None:
+    return db.query(inventory_model.FinishedProduct).filter(inventory_model.FinishedProduct.id == product_id).first()
+
+def get_finished_products(db: Session, product_type: Optional[str] = None, skip: int = 0, limit: int = 100) -> List[inventory_model.FinishedProduct]:
+    query = db.query(inventory_model.FinishedProduct)
+    if product_type:
+        query = query.filter(inventory_model.FinishedProduct.product_type == product_type)
+    return query.order_by(inventory_model.FinishedProduct.name).offset(skip).limit(limit).all()
+
+def get_finished_product_by_name(db: Session, name: str) -> inventory_model.FinishedProduct | None:
+    return db.query(inventory_model.FinishedProduct).filter(inventory_model.FinishedProduct.name == name).first()
+
+def update_finished_product(db: Session, product_id: int, product_update: inventory_schema.FinishedProductUpdate) -> inventory_model.FinishedProduct | None:
+    db_product = get_finished_product(db, product_id=product_id)
+    if not db_product:
+        return None
+    update_data = product_update.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_product, key, value)
+    db.add(db_product)
+    db.commit()
+    db.refresh(db_product)
+    return db_product
+
+def delete_finished_product(db: Session, product_id: int) -> inventory_model.FinishedProduct | None:
+    db_product = get_finished_product(db, product_id=product_id)
+    if not db_product:
+        return None
+    db.delete(db_product)
+    db.commit()
+    return db_product
+
+# End of CRUD functions for inventory
