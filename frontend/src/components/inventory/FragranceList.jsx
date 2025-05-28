@@ -1,38 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
-function FragranceList() {
-  const [fragrances, setFragrances] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchFragrances = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch('http://localhost:8000/inventory/fragrances/');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setFragrances(data);
-        setError(null);
-      } catch (err) {
-        setError(err.message);
-        setFragrances([]); // Clear fragrances on error
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchFragrances();
-  }, []); // El array vacío asegura que se ejecute solo al montar
-
+// Componente presentacional para mostrar la lista de fragancias
+function FragranceList({ fragrances, isLoading, error, onRetry }) {
   if (isLoading) {
     return <p>Cargando fragancias...</p>;
   }
 
   if (error) {
-    return <p>Error al cargar fragancias: {error}</p>;
+    return (
+      <div>
+        <p>Error al cargar fragancias: {error}</p>
+        {onRetry && <button onClick={onRetry}>Reintentar</button>}
+      </div>
+    );
   }
 
   return (
