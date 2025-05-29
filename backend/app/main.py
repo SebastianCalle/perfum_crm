@@ -7,7 +7,8 @@ from .database import engine, Base # Import Base and engine
 # Import all models to register them with Base metadata
 # This ensures that when inventory_model is imported, all model classes defined within it
 # (which inherit from Base) are registered with Base.metadata.
-from .models import inventory_model 
+from .models import inventory_model
+from .models import sales_model  # Import sales models
 
 # Create database tables if they don't exist
 # This is suitable for development. For production, consider using Alembic migrations.
@@ -15,9 +16,10 @@ Base.metadata.create_all(bind=engine)
 
 # Import Routers
 from .routers import inventory_router # Import the inventory router
+from .routes import sales_routes  # Import the sales routes
 
 app = FastAPI(
-    title="Perfum CRM API",
+    title="Gallery Essence CRM API",
     description="API for managing perfume customer relationships and sales.",
     version="0.1.0",
     # You can add more OpenAPI metadata here
@@ -35,6 +37,7 @@ app = FastAPI(
 
 # Include routers from other modules
 app.include_router(inventory_router.router) # Register inventory routes
+app.include_router(sales_routes.router, prefix="/sales", tags=["sales"])  # Register sales routes
 
 # Define allowed origins for CORS
 origins = [
@@ -53,7 +56,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to Perfum CRM API"}
+    return {"message": "Welcome to Gallery Essence CRM API"}
 
 # Placeholder for future routers and application logic
 # from .routers import users, products, sales
