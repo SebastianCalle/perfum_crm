@@ -6,7 +6,7 @@
 from .inventory_model import Base, Fragrance, Bottle, Alcohol, Additive, Humidifier, HumidifierEssence, FinishedProduct
 
 # Import sales models from sales_model.py (step by step implementation)
-from .sales_model import Customer, Recipe
+from .sales_model import Customer, Recipe, Sale, SaleItem
 
 # If you have other model files in the future, import them here as well.
 # For example:

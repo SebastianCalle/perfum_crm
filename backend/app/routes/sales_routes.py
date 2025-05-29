@@ -125,4 +125,63 @@ def delete_recipe(recipe_id: int, db: Session = Depends(get_db)):
     """
     success = sales_crud.delete_recipe(db, recipe_id=recipe_id)
     if not success:
-        raise HTTPException(status_code=404, detail="Recipe not found") 
+        raise HTTPException(status_code=404, detail="Recipe not found")
+
+# Sale routes
+
+@router.post("/sales/", response_model=sales_schema.Sale, status_code=status.HTTP_201_CREATED)
+def create_sale(sale: sales_schema.SaleCreateSimple, db: Session = Depends(get_db)):
+    """
+    Create a new sale with automatic price calculation.
+    """
+    try:
+        return sales_crud.create_sale(db=db, sale=sale)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error creating sale: {str(e)}")
+
+@router.get("/sales/", response_model=List[sales_schema.Sale])
+def get_sales(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """
+    Get all sales with pagination.
+    """
+    sales = sales_crud.get_sales(db, skip=skip, limit=limit)
+    return sales
+
+@router.get("/sales/{sale_id}", response_model=sales_schema.Sale)
+def get_sale(sale_id: int, db: Session = Depends(get_db)):
+    """
+    Get a single sale by ID with all items.
+    """
+    sale = sales_crud.get_sale(db, sale_id=sale_id)
+    if sale is None:
+        raise HTTPException(status_code=404, detail="Sale not found")
+    return sale
+
+@router.get("/sales/date-range/")
+def get_sales_by_date_range(
+    start_date: str = Query(..., description="Start date (YYYY-MM-DD)"),
+    end_date: str = Query(..., description="End date (YYYY-MM-DD)"),
+    db: Session = Depends(get_db)
+):
+    """
+    Get sales within a date range.
+    """
+    try:
+        sales = sales_crud.get_sales_by_date_range(db, start_date=start_date, end_date=end_date)
+        return sales
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error retrieving sales: {str(e)}")
+
+@router.get("/sales/summary/daily/")
+def get_daily_sales_summary(
+    date: str = Query(..., description="Date (YYYY-MM-DD)"),
+    db: Session = Depends(get_db)
+):
+    """
+    Get daily sales summary with totals and payment method breakdown.
+    """
+    try:
+        summary = sales_crud.get_daily_sales_summary(db, date=date)
+        return summary
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error generating summary: {str(e)}") 
